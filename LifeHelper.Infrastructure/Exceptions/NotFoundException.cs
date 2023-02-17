@@ -5,5 +5,6 @@ namespace LifeHelper.Infrastructure.Exceptions;
 public class NotFoundException : CustomException
 {
     private const HttpStatusCode StatusCode = HttpStatusCode.NotFound;
-    protected NotFoundException( string message) : base(StatusCode, message) {}
+    
+    public NotFoundException( string message) : base(StatusCode, message) {}
 }

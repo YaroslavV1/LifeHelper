@@ -25,11 +25,11 @@ public class ExceptionHandlerMiddleware
         }
         catch (Exception e)
         {
-            await ExceptionAsync(e, context);
+            await HandleExceptionAsync(e, context);
         }
     }
 
-    private async Task ExceptionAsync(Exception exception, HttpContext context)
+    private async Task HandleExceptionAsync(Exception exception, HttpContext context)
     {
         _logger.LogError(exception.Message);
 
