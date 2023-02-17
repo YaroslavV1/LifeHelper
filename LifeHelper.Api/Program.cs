@@ -1,3 +1,4 @@
+using LifeHelper.Api.Middlewares;
 using LifeHelper.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
