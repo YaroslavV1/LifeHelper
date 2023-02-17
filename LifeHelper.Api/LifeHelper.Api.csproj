@@ -15,4 +15,7 @@
       <Folder Include="Controllers" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\LifeHelper.Services\LifeHelper.Services.csproj" />
+    </ItemGroup>
 </Project>
