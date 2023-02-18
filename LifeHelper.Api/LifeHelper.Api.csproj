@@ -4,6 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>c1cedad3-093a-4fa5-8a15-bec69107f430</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,10 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+        <ProjectReference Include="..\LifeHelper.Services\LifeHelper.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\LifeHelper.Services\LifeHelper.Services.csproj" />
+      <Folder Include="Controllers" />
     </ItemGroup>
 </Project>
