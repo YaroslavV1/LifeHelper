@@ -28,6 +28,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<LifeHelperDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LifeHelperDatabase")));
 
+//Add AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
