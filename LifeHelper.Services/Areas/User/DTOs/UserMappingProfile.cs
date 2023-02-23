@@ -4,10 +4,11 @@ namespace LifeHelper.Services.Areas.User.DTOs;
 
 using Infrastructure.Entities;
 
-public class UserProfile: Profile
+public class UserMappingProfile: Profile
 {
-    public UserProfile()
+    public UserMappingProfile()
     {
         CreateMap<UserDto, User>();
+        CreateMap<UserInputDto, User>();
     }
 }
