@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace LifeHelper.Services.Areas.User.DTOs;
 
@@ -9,6 +10,9 @@ public class UserMappingProfile: Profile
     public UserMappingProfile()
     {
         CreateMap<UserDto, User>();
-        CreateMap<UserInputDto, User>();
+        CreateMap<User, UserDto>();
+        CreateMap<UserInputDto, User>()
+            .ForMember(des => des.PasswordHash, 
+                op => op.MapFrom(u => u.Password));
     }
 }

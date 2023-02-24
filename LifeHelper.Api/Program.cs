@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using LifeHelper.Api.Middlewares;
 using LifeHelper.Infrastructure;
+using LifeHelper.Services.Areas.User;
 using LifeHelper.Services.Areas.User.Validators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -33,6 +34,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserInputValidator>();
+
+builder.Services.AddTransient<IUserService, UserService>();
 
 var app = builder.Build();
 
