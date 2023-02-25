@@ -69,7 +69,7 @@ public class UserService : IUserService
 
         if (!CheckIfEmailIsAvailableAsync(userInputDto.Email).Result)
         {
-            throw new BadRequestException("The user with this mail already exists");
+            throw new BadRequestException("The user with this mail is already exists");
         }
         
         userInputDto.Password = await HashPasswordAsync(user, userInputDto.Password);
