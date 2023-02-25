@@ -23,6 +23,7 @@ public class UserService : IUserService
         _mapper = mapper;
         _passwordHasher = new PasswordHasher<User>();
     }
+    
     public async Task<IList<UserDto>> GetListAsync()
     {
         return await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider).ToListAsync();
@@ -53,7 +54,7 @@ public class UserService : IUserService
         
         var user = _mapper.Map<User>(userInputDto);
         
-        user.PasswordHash = await PasswordHashAsync(user, userInputDto.Password);
+        user.PasswordHash = await HashPasswordAsync(user, userInputDto.Password);
 
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
@@ -68,10 +69,10 @@ public class UserService : IUserService
 
         if (!CheckIfEmailIsAvailableAsync(userInputDto.Email).Result)
         {
-            throw new BadRequestException("A user with this mail already exists");
+            throw new BadRequestException("The user with this mail already exists");
         }
         
-        userInputDto.Password = await PasswordHashAsync(user, userInputDto.Password);
+        userInputDto.Password = await HashPasswordAsync(user, userInputDto.Password);
         
         _mapper.Map(userInputDto, user);
 
@@ -92,7 +93,8 @@ public class UserService : IUserService
 
     public async Task<bool> CheckIfEmailIsAvailableAsync(string email)
     {
-        return await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+        return await _dbContext.Users
+            .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(user => user.Email == email) is null;
     }
     
@@ -104,7 +106,7 @@ public class UserService : IUserService
         return result == PasswordVerificationResult.Success;
     }
 
-    private async Task<string> PasswordHashAsync(User user, string password)
+    private async Task<string> HashPasswordAsync(User user, string password)
     {
         return await Task.Run(() => _passwordHasher.HashPassword(user, password));
     }
