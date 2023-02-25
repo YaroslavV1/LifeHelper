@@ -5,6 +5,7 @@ using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.User.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using BadRequestException = LifeHelper.Infrastructure.Exceptions.BadRequestException;
 
 namespace LifeHelper.Services.Areas.User;
 
@@ -14,52 +15,45 @@ public class UserService : IUserService
 {
     private readonly LifeHelperDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly PasswordHasher<User> _passwordHasher;
 
     public UserService(LifeHelperDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _passwordHasher = new PasswordHasher<User>();
     }
-    public async Task<ICollection<UserDto>> GetAllUsersAsync()
+    public async Task<IList<UserDto>> GetListAsync()
     {
-        return await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .ToListAsync();
-
+        return await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<UserDto> GetByIdAsync(int id)
     {
-        var user = await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(u => u.Id == id);
-        
-        if (user is null)
-        {
-            throw new NotFoundException($"User with id - {id} not found");
-        }
-
-        return user;
+        return await _dbContext.Users
+            .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(user => user.Id == id) 
+               ?? throw new NotFoundException($"User with Id: {id} not found");
     }
 
     public async Task<UserDto> GetByNicknameAsync(string nickname)
     {
-        var user = await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(u => u.Nickname.ToLower() == nickname.ToLower());
-        
-        if (user is null)
-        {
-            throw new NotFoundException($"User with Nickname - {nickname} not found");
-        }
-
-        return user;
+        return await _dbContext.Users
+            .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(user => user.Nickname.ToLower() == nickname.ToLower()) 
+               ?? throw new NotFoundException($"User with Nickname: {nickname} not found");
     }
 
     public async Task<int> CreateAsync(UserInputDto userInputDto)
     {
-        await IsEmailAvailableAsync(userInputDto.Email);
+        if (!CheckIfEmailIsAvailableAsync(userInputDto.Email).Result)
+        {
+            throw new BadRequestException("A user with this mail already exists");
+        }
         
-        userInputDto = PasswordHasher(userInputDto);
-
         var user = _mapper.Map<User>(userInputDto);
+        
+        user.PasswordHash = await PasswordHashAsync(user, userInputDto.Password);
 
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
@@ -67,28 +61,17 @@ public class UserService : IUserService
         return user.Id;
     }
 
-    public async Task<int> UpdateAsync(int id, UserInputDto userInputDto)
+    public async Task<int> UpdateByIdAsync(int id, UserInputDto userInputDto)
     {
-        var user = await _dbContext.Users
-            .Include(u => u.TaskItems)
-            .FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == id)
+                ?? throw new NotFoundException($"User with Id: {id} not found");
 
-        if (user is null)
+        if (!CheckIfEmailIsAvailableAsync(userInputDto.Email).Result)
         {
-            throw new NotFoundException($"User with id - {id} not found");
+            throw new BadRequestException("A user with this mail already exists");
         }
-
-        await IsEmailAvailableAsync(userInputDto.Email);
-
         
-        if (VerifyHashedPassword(user, userInputDto.Password))
-        {
-            throw new BadRequestException($"The password should not be the same");
-        }
-        else
-        {
-            userInputDto = PasswordHasher(userInputDto);
-        }
+        userInputDto.Password = await PasswordHashAsync(user, userInputDto.Password);
         
         _mapper.Map(userInputDto, user);
 
@@ -96,62 +79,35 @@ public class UserService : IUserService
         await _dbContext.SaveChangesAsync();
 
         return user.Id;
-
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteByIdAsync(int id)
     {
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == id);
-
-        if (user is null)
-        {
-            throw new NotFoundException($"User with id - {id} not found");
-        }
-
+        var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == id)
+                ?? throw new NotFoundException($"User with Id: {id} not found");
+        
         _dbContext.Users.Remove(user);
         await _dbContext.SaveChangesAsync();
     }
 
-    private async Task IsEmailAvailableAsync(string email)
-    {
-        var user = await FindByEmailAsync(email);
-        
-        if (user is not null)
-        {
-            throw new BadRequestException("The entered mail is already being used");
-        }
-        
-    }
-
-    private async Task<UserDto?> FindByEmailAsync(string email)
+    public async Task<bool> CheckIfEmailIsAvailableAsync(string email)
     {
         return await _dbContext.Users.ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(u => u.Email == email);
+            .FirstOrDefaultAsync(user => user.Email == email) is null;
     }
-
-    private UserInputDto PasswordHasher(UserInputDto userInputDto)
+    
+    public async Task<bool> VerifyHashedPasswordAsync(User user, string password)
     {
-        var passwordHasher = new PasswordHasher<UserInputDto>();
-
-        userInputDto.Password = passwordHasher.HashPassword(userInputDto, userInputDto.Password);
+        var result = 
+            await Task.Run(() => _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password));
         
-        return userInputDto;
+        return result == PasswordVerificationResult.Success;
     }
 
-    public bool VerifyHashedPassword(User user, string password)
+    private async Task<string> PasswordHashAsync(User user, string password)
     {
-        var passwordHasher = new PasswordHasher<User>();
-        var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
-
-        if (result == PasswordVerificationResult.Success)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
+        return await Task.Run(() => _passwordHasher.HashPassword(user, password));
     }
+
+    
 }

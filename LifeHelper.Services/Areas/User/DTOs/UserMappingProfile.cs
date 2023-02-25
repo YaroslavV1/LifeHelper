@@ -9,10 +9,8 @@ public class UserMappingProfile: Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<UserDto, User>();
         CreateMap<User, UserDto>();
         CreateMap<UserInputDto, User>()
-            .ForMember(des => des.PasswordHash, 
-                op => op.MapFrom(u => u.Password));
+            .ForMember(user => user.PasswordHash, option => option.MapFrom(userInput => userInput.Password));
     }
 }
