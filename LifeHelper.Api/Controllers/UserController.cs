@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifeHelper.Api.Controllers;
 
 
-[Route("api/users")]
 [ApiController]
+[Route("api/users")]
 [Produces("application/json")]
 public class UserController : ControllerBase
 {
@@ -40,7 +40,7 @@ public class UserController : ControllerBase
     /// <returns>User</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByIdAsync(int id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
     {
         var user = await _userService.GetByIdAsync(id);
 
@@ -54,7 +54,7 @@ public class UserController : ControllerBase
     /// <returns>User</returns>
     [HttpGet("{nickname}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByNicknameAsync(string nickname)
+    public async Task<IActionResult> GetByNicknameAsync([FromRoute] string nickname)
     {
         var user = await _userService.GetByNicknameAsync(nickname);
 
@@ -84,7 +84,7 @@ public class UserController : ControllerBase
     /// <returns></returns>
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateByIdAsync(int id, [FromBody] UserInputDto userInputDto)
+    public async Task<IActionResult> UpdateByIdAsync([FromRoute] int id, [FromBody] UserInputDto userInputDto)
     {
         var userId = await _userService.UpdateByIdAsync(id, userInputDto);
         var user = await _userService.GetByIdAsync(id);
@@ -98,8 +98,8 @@ public class UserController : ControllerBase
     /// <param name="id">User Id</param>
     /// <returns></returns>
     [HttpDelete("{id:int}")]
-    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteByIdAsync(int id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteByIdAsync([FromRoute] int id)
     {
         await _userService.DeleteByIdAsync(id);
 
