@@ -20,9 +20,9 @@ public class UserController : ControllerBase
     }
     
     /// <summary>
-    /// Getting the list of Users
+    /// Get the List of Users
     /// </summary>
-    /// <returns>List of Users</returns>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(IList<UserDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetListAsync()
@@ -34,10 +34,10 @@ public class UserController : ControllerBase
 
     
     /// <summary>
-    /// Getting the User by Id
+    /// Get the User by Id
     /// </summary>
     /// <param name="id">User Id</param>
-    /// <returns>User</returns>
+    /// <returns></returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
@@ -48,10 +48,10 @@ public class UserController : ControllerBase
     }
     
     /// <summary>
-    /// Getting the User by Nickname
+    /// Get the User by Nickname
     /// </summary>
     /// <param name="nickname">User Nickname</param>
-    /// <returns>User</returns>
+    /// <returns></returns>
     [HttpGet("{nickname}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByNicknameAsync([FromRoute] string nickname)
@@ -65,7 +65,7 @@ public class UserController : ControllerBase
     /// Create new User
     /// </summary>
     /// <param name="userInputDto"></param>
-    /// <returns>New User</returns>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAsync([FromBody] UserInputDto userInputDto)
