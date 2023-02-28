@@ -36,13 +36,14 @@ public class UserService : IUserService
             .FirstOrDefaultAsync(user => user.Id == id) 
                ?? throw new NotFoundException($"User with Id: {id} not found");
     }
-
-    public async Task<UserDto> GetByNicknameAsync(string nickname)
+    
+    public async Task<UserDto> GetByLoginAsync(UserLoginDto loginDto)
     {
-        return await _dbContext.Users
+        return await _dbContext.Users.Include(user => user.Roles)
             .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(user => user.Nickname.ToLower() == nickname.ToLower()) 
-               ?? throw new NotFoundException($"User with Nickname: {nickname} not found");
+            .FirstOrDefaultAsync(user =>
+                user.Nickname.ToLower() == loginDto.Login.ToLower() || user.Email == loginDto.Login) 
+                ?? throw new NotFoundException($"User with Login: {loginDto.Login} not found");
     }
 
     public async Task<int> CreateAsync(UserInputDto userInputDto)
@@ -55,9 +56,11 @@ public class UserService : IUserService
         var user = _mapper.Map<User>(userInputDto);
         
         user.PasswordHash = await HashPasswordAsync(user, userInputDto.Password);
-
+        
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
+
+        await AddRoleToUser(user.Id, "User");
 
         return user.Id;
     }
@@ -91,21 +94,35 @@ public class UserService : IUserService
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<bool> CheckIfEmailIsAvailableAsync(string email)
+    private async Task<bool> CheckIfEmailIsAvailableAsync(string email)
     {
         return await _dbContext.Users
             .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(user => user.Email == email) is null;
     }
     
-    public async Task<bool> VerifyHashedPasswordAsync(User user, string password)
+    public async Task<bool> VerifyHashedPasswordAsync(int userId, string password)
     {
+        var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == userId)
+            ?? throw new NotFoundException($"User with Id: {userId} not found");
+        
         var result = 
             await Task.Run(() => _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password));
         
         return result == PasswordVerificationResult.Success;
     }
 
+    private async Task AddRoleToUser(int userId, string roleName)
+    {
+        var user = await _dbContext.Users.Include(user => user.Roles).FirstOrDefaultAsync(user => user.Id == userId);
+        var role = await _dbContext.Roles.FirstOrDefaultAsync(role => role.NormalName.ToLower() == roleName.ToLower());
+
+        if (role != null || user != null)
+        {
+            user!.Roles.Add(role!);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
     private async Task<string> HashPasswordAsync(User user, string password)
     {
         return await Task.Run(() => _passwordHasher.HashPassword(user, password));

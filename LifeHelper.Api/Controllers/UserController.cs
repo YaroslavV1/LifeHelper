@@ -1,7 +1,9 @@
 ﻿using LifeHelper.Api.Models;
+using LifeHelper.Infrastructure.Entities;
 using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.User;
 using LifeHelper.Services.Areas.User.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifeHelper.Api.Controllers;
@@ -10,6 +12,7 @@ namespace LifeHelper.Api.Controllers;
 [ApiController]
 [Route("api/users")]
 [Produces("application/json")]
+[Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -43,20 +46,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
     {
         var user = await _userService.GetByIdAsync(id);
-
-        return Ok(user);
-    }
-    
-    /// <summary>
-    /// Get the User by Nickname
-    /// </summary>
-    /// <param name="nickname">User Nickname</param>
-    /// <returns></returns>
-    [HttpGet("{nickname}")]
-    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByNicknameAsync([FromRoute] string nickname)
-    {
-        var user = await _userService.GetByNicknameAsync(nickname);
 
         return Ok(user);
     }
