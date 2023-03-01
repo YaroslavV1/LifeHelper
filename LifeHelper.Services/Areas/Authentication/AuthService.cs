@@ -29,10 +29,6 @@ public class AuthService : IAuthService
     public async Task<string> LoginAsync(UserLoginDto loginDto)
     {
         var loggedInUser = await _userService.GetByLoginAsync(loginDto);
-        if (!_userService.VerifyHashedPasswordAsync(loggedInUser.Id, loginDto.Password).Result)
-        {
-            throw new BadRequestException("Passwords don't match");
-        }
 
         var claims = new List<Claim>
         {
@@ -43,7 +39,7 @@ public class AuthService : IAuthService
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSecurity:SecurityKey").Value));
+            Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSecurity:SecurityKey").Value!));
         
         var signinCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -53,8 +49,7 @@ public class AuthService : IAuthService
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             notBefore: DateTime.UtcNow,
-            signingCredentials: signinCredentials
-            );
+            signingCredentials: signinCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(jwtToken);
     }

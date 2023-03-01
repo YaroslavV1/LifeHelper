@@ -39,11 +39,19 @@ public class UserService : IUserService
     
     public async Task<UserDto> GetByLoginAsync(UserLoginDto loginDto)
     {
-        return await _dbContext.Users.Include(user => user.Roles)
-            .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(user =>
-                user.Nickname.ToLower() == loginDto.Login.ToLower() || user.Email == loginDto.Login) 
-                ?? throw new NotFoundException($"User with Login: {loginDto.Login} not found");
+        var loggedInUser = await _dbContext.Users
+                   .Include(user => user.Roles)
+                   .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                   .FirstOrDefaultAsync(user => 
+                       user.Nickname.ToLower() == loginDto.Login.ToLower() || user.Email == loginDto.Login) 
+               ?? throw new NotFoundException($"User with Login: {loginDto.Login} not found");
+        
+        if (!VerifyHashedPasswordAsync(loggedInUser.Id, loginDto.Password).Result)
+        {
+            throw new BadRequestException("Passwords don't match");
+        }
+
+        return loggedInUser;
     }
 
     public async Task<int> CreateAsync(UserInputDto userInputDto)
@@ -117,7 +125,7 @@ public class UserService : IUserService
         var user = await _dbContext.Users.Include(user => user.Roles).FirstOrDefaultAsync(user => user.Id == userId);
         var role = await _dbContext.Roles.FirstOrDefaultAsync(role => role.NormalName.ToLower() == roleName.ToLower());
 
-        if (role != null || user != null)
+        if (role != null && user != null)
         {
             user!.Roles.Add(role!);
             await _dbContext.SaveChangesAsync();
