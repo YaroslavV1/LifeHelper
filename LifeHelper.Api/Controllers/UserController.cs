@@ -1,4 +1,5 @@
-﻿using LifeHelper.Api.Models;
+﻿using System.Net.Mime;
+using LifeHelper.Api.Models;
 using LifeHelper.Infrastructure.Entities;
 using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.User;
@@ -11,7 +12,7 @@ namespace LifeHelper.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
-[Produces("application/json")]
+[Produces(MediaTypeNames.Application.Json)]
 [Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
@@ -76,7 +77,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateByIdAsync([FromRoute] int id, [FromBody] UserInputDto userInputDto)
     {
         var userId = await _userService.UpdateByIdAsync(id, userInputDto);
-        var user = await _userService.GetByIdAsync(id);
+        var user = await _userService.GetByIdAsync(userId);
 
         return Ok(user);
     }
