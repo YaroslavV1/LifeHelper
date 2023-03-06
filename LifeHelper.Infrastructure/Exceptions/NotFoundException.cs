@@ -6,5 +6,5 @@ public class NotFoundException : CustomException
 {
     private const HttpStatusCode StatusCode = HttpStatusCode.NotFound;
     
-    public NotFoundException( string message) : base(StatusCode, message) {}
+    public NotFoundException( string errorMessage) : base(StatusCode, errorMessage) {}
 }

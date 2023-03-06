@@ -8,8 +8,8 @@ public class LifeHelperDbContext : DbContext
 {
     private readonly IRoleSeeder _roleSeeder;
     public DbSet<User> Users { get; set; } = null!;
-    public DbSet<TaskItem> TaskItems { get; set; } = null!;
-    public DbSet<SubtaskItem> SubtaskItems { get; set; } = null!;
+    public DbSet<Note> Notes { get; set; } = null!;
+    public DbSet<Subnote> Subnotes { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
 
     public LifeHelperDbContext(DbContextOptions<LifeHelperDbContext> options, IRoleSeeder roleSeeder) : base(options)

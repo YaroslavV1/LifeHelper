@@ -54,7 +54,7 @@ public class UserService : IUserService
         return loggedInUser;
     }
 
-    public async Task<int> CreateAsync(UserInputDto userInputDto)
+    public async Task<UserDto> CreateAsync(UserInputDto userInputDto)
     {
         if (!CheckIfEmailIsAvailableAsync(userInputDto.Email).Result)
         {
@@ -62,6 +62,7 @@ public class UserService : IUserService
         }
         
         var user = _mapper.Map<User>(userInputDto);
+        var userDto = _mapper.Map<UserDto>(user);
         
         user.PasswordHash = await HashPasswordAsync(user, userInputDto.Password);
         
@@ -70,10 +71,10 @@ public class UserService : IUserService
 
         await AddRoleToUser(user.Id, "User");
 
-        return user.Id;
+        return userDto;
     }
 
-    public async Task<int> UpdateByIdAsync(int id, UserInputDto userInputDto)
+    public async Task<UserDto> UpdateByIdAsync(int id, UserInputDto userInputDto)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == id)
                 ?? throw new NotFoundException($"User with Id: {id} not found");
@@ -86,11 +87,12 @@ public class UserService : IUserService
         userInputDto.Password = await HashPasswordAsync(user, userInputDto.Password);
         
         _mapper.Map(userInputDto, user);
-
+        var userDto = _mapper.Map<UserDto>(user);
+        
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync();
 
-        return user.Id;
+        return userDto;
     }
 
     public async Task DeleteByIdAsync(int id)
@@ -127,7 +129,7 @@ public class UserService : IUserService
 
         if (role != null && user != null)
         {
-            user!.Roles.Add(role!);
+            user.Roles.Add(role);
             await _dbContext.SaveChangesAsync();
         }
     }
