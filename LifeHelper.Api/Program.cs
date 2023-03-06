@@ -90,7 +90,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserInputValidator>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRoleSeeder, RoleSeeder>();
 builder.Services.AddTransient<IAuthService, AuthService>();
-builder.Services.AddTransient<IClaimService, ClaimService>();
+builder.Services.AddTransient<IClaimParserService, ClaimParserService>();
 builder.Services.AddTransient<INoteService, NoteService>();
 
 

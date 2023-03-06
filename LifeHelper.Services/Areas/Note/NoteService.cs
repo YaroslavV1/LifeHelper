@@ -22,23 +22,15 @@ public class NoteService : INoteService
         _mapper = mapper;
     }
     
-    public async Task<IList<NoteDto>> GetListAsync(SortOrder sortOrder, int userId)
+    public async Task<IList<NoteDto>> GetListAsync(bool isDescending, int userId)
     {
         var notes = _dbContext.Notes.Where(note => note.UserId == userId);
+        
+        notes = isDescending 
+            ? notes.OrderByDescending(note => note.CreatedDate) 
+            : notes.OrderBy(note => note.CreatedDate);
 
-        switch (sortOrder)
-        {
-            case SortOrder.DateAsc:
-                return await notes
-                    .OrderBy(note => note.CreatedDate)
-                    .ProjectTo<NoteDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
-            default:
-                return await notes
-                    .OrderByDescending(note => note.CreatedDate)
-                    .ProjectTo<NoteDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
-        }
+        return await notes.ProjectTo<NoteDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<NoteDto> GetByIdAsync(int id, int userId)
@@ -80,6 +72,7 @@ public class NoteService : INoteService
         await _dbContext.SaveChangesAsync();
         
         var noteDto = _mapper.Map<NoteDto>(note);
+        
         return noteDto;
     }
 

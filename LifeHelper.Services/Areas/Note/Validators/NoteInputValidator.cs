@@ -9,7 +9,6 @@ public class NoteInputValidator : AbstractValidator<NoteInputDto>
     {
         RuleFor(note => note.Title)
             .NotEmpty().WithMessage("{PropertyName} is required")
-            .MinimumLength(5).WithMessage("Minimum number of characters - {MinLength}")
-            .MaximumLength(150).WithMessage("Maximum number of characters - {MaxLength}");
+            .Length(5, 150).WithMessage("Length of the title must be from {MinLength} - {MaxLength} characters");
     }
 }
