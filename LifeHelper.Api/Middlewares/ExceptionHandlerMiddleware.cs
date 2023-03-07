@@ -39,12 +39,12 @@ public class ExceptionHandlerMiddleware
         if (exception is CustomException customException)
         {
             context.Response.StatusCode = (int)customException.StatusCode;
-            errorModel.Message = customException.Message;
+            errorModel.ErrorMessage = customException.Message;
         }
         else
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            errorModel.Message = "Internal Server Error";
+            errorModel.ErrorMessage = "Internal Server Error";
         }
 
         await context.Response.WriteAsJsonAsync(errorModel);

@@ -7,11 +7,11 @@ namespace LifeHelper.Infrastructure;
 public class LifeHelperDbContext : DbContext
 {
     private readonly IRoleSeeder _roleSeeder;
-    public DbSet<User> Users { get; set; } = null!;
-    public DbSet<TaskItem> TaskItems { get; set; } = null!;
-    public DbSet<SubtaskItem> SubtaskItems { get; set; } = null!;
-    public DbSet<Role> Roles { get; set; } = null!;
-
+    public DbSet<User> Users { get; set; }
+    public DbSet<Note> Notes { get; set; }
+    public DbSet<Subnote> Subnotes { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    
     public LifeHelperDbContext(DbContextOptions<LifeHelperDbContext> options, IRoleSeeder roleSeeder) : base(options)
     {
         _roleSeeder = roleSeeder;

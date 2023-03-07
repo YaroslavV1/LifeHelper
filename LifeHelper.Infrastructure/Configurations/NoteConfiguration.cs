@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LifeHelper.Infrastructure.Configurations;
 
-public class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
+public class TaskItemConfiguration : IEntityTypeConfiguration<Note>
 {
-    public void Configure(EntityTypeBuilder<TaskItem> builder)
+    public void Configure(EntityTypeBuilder<Note> builder)
     {
         builder.HasOne(t => t.User)
-            .WithMany(u => u.TaskItems)
+            .WithMany(u => u.Notes)
             .HasForeignKey(t => t.UserId);
     }
 }

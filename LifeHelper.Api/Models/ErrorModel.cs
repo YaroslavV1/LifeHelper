@@ -2,5 +2,5 @@
 
 public class ErrorModel
 {
-    public string Message { get; set; }
+    public string ErrorMessage { get; set; }
 }

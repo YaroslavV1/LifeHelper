@@ -6,7 +6,7 @@ public class CustomException : Exception
 {
     public HttpStatusCode StatusCode { get; }
 
-    protected CustomException(HttpStatusCode statusCode, string message) : base(message)
+    protected CustomException(HttpStatusCode statusCode, string errorMessage) : base(errorMessage)
     {
         StatusCode = statusCode;
     }

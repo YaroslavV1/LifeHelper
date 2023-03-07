@@ -6,5 +6,5 @@ public class BadRequestException : CustomException
 {
     private const HttpStatusCode StatusCode = HttpStatusCode.BadRequest;
     
-    public BadRequestException(string message) : base(StatusCode, message) {}
+    public BadRequestException(string errorMessage) : base(StatusCode, errorMessage) {}
 }

@@ -1,6 +1,6 @@
 ﻿namespace LifeHelper.Infrastructure.Entities;
 
-public class TaskItem
+public class Note
 {
     public int Id { get; set; }
     public string Title { get; set; }
@@ -11,5 +11,5 @@ public class TaskItem
     public int UserId { get; set; }
     public User User { get; set; }
     
-    public ICollection<SubtaskItem> SubtaskItems { get; set; }
+    public ICollection<Subnote> Subnotes { get; set; }
 }

@@ -1,7 +1,4 @@
 ﻿using System.Net.Mime;
-using LifeHelper.Api.Models;
-using LifeHelper.Infrastructure.Entities;
-using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.User;
 using LifeHelper.Services.Areas.User.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +32,6 @@ public class UserController : ControllerBase
 
         return Ok(users);
     }
-
     
     /// <summary>
     /// Get the User by Id
@@ -60,8 +56,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAsync([FromBody] UserInputDto userInputDto)
     {
-        var userId = await _userService.CreateAsync(userInputDto);
-        var user = await _userService.GetByIdAsync(userId);
+        var user = await _userService.CreateAsync(userInputDto);
 
         return CreatedAtAction("GetById", new { id = user.Id }, user);
     }
@@ -76,8 +71,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateByIdAsync([FromRoute] int id, [FromBody] UserInputDto userInputDto)
     {
-        var userId = await _userService.UpdateByIdAsync(id, userInputDto);
-        var user = await _userService.GetByIdAsync(userId);
+        var user = await _userService.UpdateByIdAsync(id, userInputDto);
 
         return Ok(user);
     }

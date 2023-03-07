@@ -6,6 +6,8 @@ using LifeHelper.Api.Middlewares;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Seeders;
 using LifeHelper.Services.Areas.Authentication;
+using LifeHelper.Services.Areas.Helpers.Jwt;
+using LifeHelper.Services.Areas.Note;
 using LifeHelper.Services.Areas.User;
 using LifeHelper.Services.Areas.User.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -88,6 +90,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserInputValidator>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRoleSeeder, RoleSeeder>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IClaimParserService, ClaimParserService>();
+builder.Services.AddTransient<INoteService, NoteService>();
+
 
 var app = builder.Build();
 
