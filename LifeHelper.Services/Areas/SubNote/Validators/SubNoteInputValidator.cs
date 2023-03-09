@@ -1,12 +1,12 @@
 using FluentValidation;
-using LifeHelper.Services.Areas.Note.DTOs;
+using LifeHelper.Services.Areas.SubNote.DTOs;
 using LifeHelper.Services.Areas.User.Validators;
 
-namespace LifeHelper.Services.Areas.Note.Validators;
+namespace LifeHelper.Services.Areas.SubNote.Validators;
 
-public class NoteInputValidator : AbstractValidator<NoteInputDto>
+public class SubNoteInputValidator : AbstractValidator<SubNoteInputDto>
 {
-    public NoteInputValidator()
+    public SubNoteInputValidator()
     {
         RuleFor(note => note.Title)
             .IsRequired()

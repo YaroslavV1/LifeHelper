@@ -8,10 +8,10 @@ public class UserLoginValidator : AbstractValidator<UserLoginDto>
     public UserLoginValidator()
     {
         RuleFor(userLogin => userLogin.Login)
-            .NotEmpty().WithMessage("{PropertyName} is required");
+            .IsRequired();
         
         RuleFor(userLogin => userLogin.Password)
-            .NotEmpty().WithMessage("{PropertyName} is required")
+            .IsRequired()
             .Password();
     }
 }

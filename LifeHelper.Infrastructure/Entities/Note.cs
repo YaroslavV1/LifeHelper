@@ -11,5 +11,5 @@ public class Note
     public int UserId { get; set; }
     public User User { get; set; }
     
-    public ICollection<Subnote> Subnotes { get; set; }
+    public ICollection<SubNote> SubNotes { get; set; }
 }
