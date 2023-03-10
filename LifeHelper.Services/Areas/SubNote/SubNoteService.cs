@@ -100,7 +100,7 @@ public class SubNoteService : ISubNoteService
             .Include(user => user.Notes)
             .FirstOrDefaultAsync(user => user.Id == _currentUserInfo.Id);
         
-        if (user is null || user.Notes.Any(note => note.Id != noteId))
+        if (user is null || user.Notes.All(note => note.Id != noteId))
         {
             throw new NotFoundException($"Note with Id: {noteId} does not exist");
         }
