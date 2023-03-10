@@ -19,7 +19,9 @@ public class NoteService : INoteService
     private readonly LifeHelperDbContext _dbContext;
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
-    public NoteService(LifeHelperDbContext dbContext,
+    
+    public NoteService(
+        LifeHelperDbContext dbContext,
         IMapper mapper,
         IHttpContextAccessor context,
         IClaimParserService parserService)

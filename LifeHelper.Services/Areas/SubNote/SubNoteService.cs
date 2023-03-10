@@ -18,11 +18,11 @@ public class SubNoteService : ISubNoteService
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
 
-    public SubNoteService
-        (LifeHelperDbContext dbContext,
-            IMapper mapper,
-            IHttpContextAccessor context,
-            IClaimParserService claimParserService)
+    public SubNoteService(
+        LifeHelperDbContext dbContext, 
+        IMapper mapper, 
+        IHttpContextAccessor context, 
+        IClaimParserService claimParserService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
@@ -31,7 +31,7 @@ public class SubNoteService : ISubNoteService
     
     public async Task<IList<SubNoteDto>> GetListAsync(int noteId)
     {
-        await ThrowIfNoteIdIsNotExists(noteId);
+        await ThrowIfNoteIsNotExists(noteId);
         
         return await _dbContext.SubNotes
             .Where(subNote => subNote.NoteId == noteId)
@@ -41,7 +41,7 @@ public class SubNoteService : ISubNoteService
 
     public async Task<SubNoteDto> GetByIdAsync(int noteId, int id)
     {
-        await ThrowIfNoteIdIsNotExists(noteId);
+        await ThrowIfNoteIsNotExists(noteId);
         
         return await _dbContext.SubNotes
                    .Where(subNote => subNote.NoteId == noteId)
@@ -52,7 +52,7 @@ public class SubNoteService : ISubNoteService
 
     public async Task<SubNoteDto> CreateAsync(SubNoteInputDto subNoteInputDto)
     {
-        await ThrowIfNoteIdIsNotExists(subNoteInputDto.NoteId);
+        await ThrowIfNoteIsNotExists(subNoteInputDto.NoteId);
         
         var subNote = _mapper.Map<SubNote>(subNoteInputDto);
         
@@ -66,7 +66,7 @@ public class SubNoteService : ISubNoteService
 
     public async Task<SubNoteDto> UpdateByIdAsync(int id, SubNoteInputDto subNoteInputDto)
     {
-        await ThrowIfNoteIdIsNotExists(subNoteInputDto.NoteId);
+        await ThrowIfNoteIsNotExists(subNoteInputDto.NoteId);
         
         var subNote = await _dbContext.SubNotes
                           .FirstOrDefaultAsync(subNote => subNote.Id == id && subNote.NoteId == subNoteInputDto.NoteId) 
@@ -84,7 +84,7 @@ public class SubNoteService : ISubNoteService
 
     public async Task DeleteByIdAsync(int noteId, int id)
     {
-        await ThrowIfNoteIdIsNotExists(noteId);
+        await ThrowIfNoteIsNotExists(noteId);
         
         var subNote = await _dbContext.SubNotes
                           .FirstOrDefaultAsync(subNote => subNote.Id == id && subNote.NoteId == noteId) 
@@ -94,13 +94,13 @@ public class SubNoteService : ISubNoteService
         await _dbContext.SaveChangesAsync();
     }
 
-    private async Task ThrowIfNoteIdIsNotExists(int noteId)
+    private async Task ThrowIfNoteIsNotExists(int noteId)
     {
         var user = await _dbContext.Users
             .Include(user => user.Notes)
             .FirstOrDefaultAsync(user => user.Id == _currentUserInfo.Id);
         
-        if (user!.Notes.All(note => note.Id != noteId))
+        if (user is null || user.Notes.Any(note => note.Id != noteId))
         {
             throw new NotFoundException($"Note with Id: {noteId} does not exist");
         }
