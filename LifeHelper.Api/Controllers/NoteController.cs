@@ -9,7 +9,7 @@ namespace LifeHelper.Api.Controllers;
 [ApiController]
 [Route("api/notes")]
 [Produces(MediaTypeNames.Application.Json)]
-[Authorize(Roles = "User,Admin")]
+[Authorize]
 public class NoteController : ControllerBase
 {
     private readonly INoteService _noteService;
