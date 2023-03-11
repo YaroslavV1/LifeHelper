@@ -30,7 +30,7 @@ public class NoteService : INoteService
         _mapper = mapper;
         _currentUserInfo = parserService.ParseInfoFromClaims(context.HttpContext);
     }
-    
+
     public async Task<IList<NoteDto>> GetListAsync(bool isDescending)
     {
         var notes = _dbContext.Notes.Where(note => note.UserId == _currentUserInfo.Id);
