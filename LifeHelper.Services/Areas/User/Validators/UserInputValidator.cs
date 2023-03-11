@@ -8,15 +8,15 @@ public class UserInputValidator : AbstractValidator<UserInputDto>
     public UserInputValidator()
     {
         RuleFor(userInput => userInput.Nickname)
-            .NotEmpty().WithMessage("{PropertyName} is required")
+            .IsRequired()
             .Length(3, 21).WithMessage("{PropertyName} must least from {MinLength} to {MaxLength} characters");
         
         RuleFor(userInput => userInput.Email)
-            .NotEmpty().WithMessage("{PropertyName} is required")
+            .IsRequired()
             .EmailAddress().WithMessage("Incorrect Email address");
 
         RuleFor(userInput => userInput.Password)
-            .NotEmpty().WithMessage("{PropertyName} is required")
+            .IsRequired()
             .Password();
         
         
