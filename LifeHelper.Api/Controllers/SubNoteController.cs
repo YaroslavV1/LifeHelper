@@ -20,7 +20,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Get the List Of Subnotes of the Note
+    /// Get the List Of Subnotes by Note ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
     /// <returns>List Of Subnotes</returns>
@@ -34,7 +34,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Get the Subnote of the Note by ID
+    /// Get the Subnote by Note ID and Subnote ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
     /// <param name="id">Enter the Subnote ID</param>
@@ -63,7 +63,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Update an existing Subnote of the Note by ID
+    /// Update an existing Subnote by ID
     /// </summary>
     /// <param name="id">Enter the Subnote ID</param>
     /// <param name="subNoteInput"></param>
@@ -78,7 +78,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Delete an existing the Subnote of the Note by ID
+    /// Delete an existing the Subnote by Note ID and Subnote ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
     /// <param name="id">Enter the Subnote ID</param>
