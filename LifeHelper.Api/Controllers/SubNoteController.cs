@@ -20,7 +20,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Get the List Of Subnotes
+    /// Get the List Of Subnotes of the Note
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
     /// <returns>List Of Subnotes</returns>
@@ -34,12 +34,12 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Get Subnote By ID
+    /// Get the Subnote of the Note by ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
     /// <param name="id">Enter the Subnote ID</param>
     /// <returns>Subnote</returns>
-    [HttpGet("{noteId}/{id:int}")]
+    [HttpGet("{noteId:int}/{id:int}")]
     [ProducesResponseType(typeof(SubNoteDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByIdAsync([FromRoute] int noteId, [FromRoute] int id)
     {
@@ -49,7 +49,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Create Subnote
+    /// Create Subnote of the Note
     /// </summary>
     /// <param name="subNoteInput"></param>
     /// <returns>Created Subnote</returns>
@@ -63,7 +63,7 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Update an existing Subnote
+    /// Update an existing Subnote of the Note by ID
     /// </summary>
     /// <param name="id">Enter the Subnote ID</param>
     /// <param name="subNoteInput"></param>
@@ -78,12 +78,12 @@ public class SubNoteController : ControllerBase
     }
 
     /// <summary>
-    /// Delete an existing the Subnote
+    /// Delete an existing the Subnote of the Note by ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
     /// <param name="id">Enter the Subnote ID</param>
     /// <returns></returns>
-    [HttpDelete("{noteId}/{id:int}")]
+    [HttpDelete("{noteId:int}/{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteByIdAsync([FromRoute] int noteId, [FromRoute] int id)
     {
