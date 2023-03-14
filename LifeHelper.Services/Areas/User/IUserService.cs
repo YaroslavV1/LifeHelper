@@ -2,8 +2,6 @@
 
 namespace LifeHelper.Services.Areas.User;
 
-using Infrastructure.Entities;
-
 public interface IUserService
 {
     public Task<IList<UserDto>> GetListAsync();

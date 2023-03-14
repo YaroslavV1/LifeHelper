@@ -1,10 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.User;
 using LifeHelper.Services.Areas.User.DTOs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

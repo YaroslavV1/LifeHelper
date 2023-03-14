@@ -1,8 +1,8 @@
 using FluentValidation;
-using LifeHelper.Services.Areas.SubNote.DTOs;
+using LifeHelper.Services.Areas.SubNotes.DTOs;
 using LifeHelper.Services.Areas.User.Validators;
 
-namespace LifeHelper.Services.Areas.SubNote.Validators;
+namespace LifeHelper.Services.Areas.SubNotes.Validators;
 
 public class SubNoteInputValidator : AbstractValidator<SubNoteInputDto>
 {

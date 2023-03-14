@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using LifeHelper.Infrastructure.Enums;
+﻿using LifeHelper.Infrastructure.Enums;
 
 namespace LifeHelper.Infrastructure.Entities;
 

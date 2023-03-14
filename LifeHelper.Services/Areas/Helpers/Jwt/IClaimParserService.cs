@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
 using Microsoft.AspNetCore.Http;
 

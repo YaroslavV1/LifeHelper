@@ -1,8 +1,7 @@
 using AutoMapper;
+using LifeHelper.Infrastructure.Entities;
 
-namespace LifeHelper.Services.Areas.SubNote.DTOs;
-
-using Infrastructure.Entities;
+namespace LifeHelper.Services.Areas.SubNotes.DTOs;
 
 public class SubNoteMappingProfile : Profile
 {

@@ -1,5 +1,4 @@
-﻿using LifeHelper.Infrastructure.Entities;
-using LifeHelper.Services.Areas.Role.DTOs;
+﻿using LifeHelper.Services.Areas.Role.DTOs;
 
 namespace LifeHelper.Services.Areas.User.DTOs;
 

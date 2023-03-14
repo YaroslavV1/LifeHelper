@@ -1,4 +1,4 @@
-namespace LifeHelper.Services.Areas.SubNote.DTOs;
+namespace LifeHelper.Services.Areas.SubNotes.DTOs;
 
 public class SubNoteInputDto
 {

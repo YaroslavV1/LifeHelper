@@ -1,16 +1,14 @@
-using System.Linq.Expressions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
-using LifeHelper.Infrastructure.Enums;
 using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.Helpers.Jwt;
 using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
-using LifeHelper.Services.Areas.Note.DTOs;
+using LifeHelper.Services.Areas.Notes.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace LifeHelper.Services.Areas.Note;
+namespace LifeHelper.Services.Areas.Notes;
 
 using Infrastructure.Entities;
 
