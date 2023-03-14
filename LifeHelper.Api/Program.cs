@@ -5,10 +5,11 @@ using FluentValidation.AspNetCore;
 using LifeHelper.Api.Middlewares;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Seeders;
+using LifeHelper.Services.Areas.Archive;
 using LifeHelper.Services.Areas.Authentication;
 using LifeHelper.Services.Areas.Helpers.Jwt;
-using LifeHelper.Services.Areas.Note;
-using LifeHelper.Services.Areas.SubNote;
+using LifeHelper.Services.Areas.Notes;
+using LifeHelper.Services.Areas.SubNotes;
 using LifeHelper.Services.Areas.User;
 using LifeHelper.Services.Areas.User.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -96,6 +97,7 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IClaimParserService, ClaimParserService>();
 builder.Services.AddTransient<INoteService, NoteService>();
 builder.Services.AddTransient<ISubNoteService, SubNoteService>();
+builder.Services.AddTransient<IArchiveService, ArchiveService>();
 
 
 var app = builder.Build();

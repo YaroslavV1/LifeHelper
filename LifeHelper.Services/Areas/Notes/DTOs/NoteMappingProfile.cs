@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace LifeHelper.Services.Areas.Note.DTOs;
+namespace LifeHelper.Services.Areas.Notes.DTOs;
 
 using Infrastructure.Entities;
 

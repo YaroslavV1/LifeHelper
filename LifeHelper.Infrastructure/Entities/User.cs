@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace LifeHelper.Infrastructure.Entities;
+﻿namespace LifeHelper.Infrastructure.Entities;
 
 public class User
 {

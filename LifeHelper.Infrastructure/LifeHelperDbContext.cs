@@ -10,6 +10,8 @@ public class LifeHelperDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Note> Notes { get; set; }
     public DbSet<SubNote> SubNotes { get; set; }
+    public DbSet<ArchiveNote> ArchiveNotes { get; set; }
+    public DbSet<ArchiveSubNote> ArchiveSubNotes { get; set; }
     public DbSet<Role> Roles { get; set; }
     
     public LifeHelperDbContext(DbContextOptions<LifeHelperDbContext> options, IRoleSeeder roleSeeder) : base(options)

@@ -1,6 +1,6 @@
-using LifeHelper.Services.Areas.Note.DTOs;
+using LifeHelper.Services.Areas.Notes.DTOs;
 
-namespace LifeHelper.Services.Areas.Note;
+namespace LifeHelper.Services.Areas.Notes;
 
 public interface INoteService
 {

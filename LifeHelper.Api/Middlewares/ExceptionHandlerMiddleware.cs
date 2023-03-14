@@ -2,7 +2,6 @@
 using System.Net.Mime;
 using LifeHelper.Api.Models;
 using LifeHelper.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace LifeHelper.Api.Middlewares;
 

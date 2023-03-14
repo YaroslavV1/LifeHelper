@@ -1,8 +1,6 @@
-using LifeHelper.Services.Areas.SubNote.DTOs;
+using LifeHelper.Services.Areas.SubNotes.DTOs;
 
-namespace LifeHelper.Services.Areas.SubNote;
-
-using Infrastructure.Entities;
+namespace LifeHelper.Services.Areas.SubNotes;
 
 public interface ISubNoteService
 {

@@ -1,16 +1,15 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
+using LifeHelper.Infrastructure.Entities;
 using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.Helpers.Jwt;
 using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
-using LifeHelper.Services.Areas.SubNote.DTOs;
+using LifeHelper.Services.Areas.SubNotes.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace LifeHelper.Services.Areas.SubNote;
-
-using LifeHelper.Infrastructure.Entities;
+namespace LifeHelper.Services.Areas.SubNotes;
 
 public class SubNoteService : ISubNoteService
 {

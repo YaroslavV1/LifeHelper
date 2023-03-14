@@ -1,8 +1,8 @@
 using FluentValidation;
-using LifeHelper.Services.Areas.Note.DTOs;
+using LifeHelper.Services.Areas.Notes.DTOs;
 using LifeHelper.Services.Areas.User.Validators;
 
-namespace LifeHelper.Services.Areas.Note.Validators;
+namespace LifeHelper.Services.Areas.Notes.Validators;
 
 public class NoteInputValidator : AbstractValidator<NoteInputDto>
 {

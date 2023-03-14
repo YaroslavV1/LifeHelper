@@ -1,6 +1,6 @@
 using System.Net.Mime;
-using LifeHelper.Services.Areas.SubNote;
-using LifeHelper.Services.Areas.SubNote.DTOs;
+using LifeHelper.Services.Areas.SubNotes;
+using LifeHelper.Services.Areas.SubNotes.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

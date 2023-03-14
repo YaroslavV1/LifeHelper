@@ -1,4 +1,4 @@
-namespace LifeHelper.Services.Areas.Note.DTOs;
+namespace LifeHelper.Services.Areas.Notes.DTOs;
 
 public class NoteDto
 {
