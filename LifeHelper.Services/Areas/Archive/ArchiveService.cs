@@ -30,7 +30,8 @@ public class ArchiveService : IArchiveService
     
     public async Task ArchiveByIdAsync(int noteId)
     {
-        var note = await _dbContext.Notes.Include(note => note.SubNotes)
+        var note = await _dbContext.Notes
+                       .Include(note => note.SubNotes)
                        .FirstOrDefaultAsync(note => note.Id == noteId && note.UserId == _currentUserInfo.Id) 
                    ?? throw new NotFoundException($"Note with Id: {noteId} not found");
 
@@ -56,7 +57,7 @@ public class ArchiveService : IArchiveService
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IList<ArchivedNoteDto>> GetListAsync(bool isDescending)
+    public async Task<IList<ArchiveNoteDto>> GetListAsync(bool isDescending)
     {
         var archiveNote = _dbContext.ArchiveNotes
             .Include(archiveNote => archiveNote.ArchiveSubNotes)
@@ -66,15 +67,15 @@ public class ArchiveService : IArchiveService
             ? archiveNote.OrderByDescending(arcNote => arcNote.CreatedDate) 
             : archiveNote.OrderBy(arcNote => arcNote.CreatedDate);
 
-        return await archiveNote.ProjectTo<ArchivedNoteDto>(_mapper.ConfigurationProvider).ToListAsync();
+        return await archiveNote.ProjectTo<ArchiveNoteDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
-    public async Task<ArchivedNoteDto> GetByIdAsync(int archiveNoteId)
+    public async Task<ArchiveNoteDto> GetByIdAsync(int archiveNoteId)
     {
         return await _dbContext.ArchiveNotes
             .Include(archiveNote => archiveNote.ArchiveSubNotes)
             .Where(archiveNote => archiveNote.UserId == _currentUserInfo.Id)
-            .ProjectTo<ArchivedNoteDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<ArchiveNoteDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(archiveNote => archiveNote.Id == archiveNoteId)
             ?? throw new NotFoundException($"Archive Note with Id: {archiveNoteId} not found");
     }

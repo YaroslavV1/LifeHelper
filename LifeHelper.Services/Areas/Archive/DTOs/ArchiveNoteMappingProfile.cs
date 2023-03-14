@@ -8,13 +8,13 @@ public class ArchiveNoteMappingProfile : Profile
 {
     public ArchiveNoteMappingProfile()
     {
-        CreateMap<ArchiveNote, ArchivedNoteDto>()
-            .ForMember(archiveNote => archiveNote.ArchivedSubNotes,
-                options => options.MapFrom(archiveDto => archiveDto.ArchiveSubNotes));
+        CreateMap<ArchiveNote, ArchiveNoteDto>()
+            .ForMember(archNote => archNote.ArchivedSubNotes,
+                options => options.MapFrom(archDto => archDto.ArchiveSubNotes));
 
         CreateMap<Note, ArchiveNote>()
-            .ForMember(arcNote => arcNote.Id, options => options.Ignore())
-            .ForMember(arcNote => arcNote.ArchiveSubNotes, options => options.MapFrom(note => note.SubNotes));
+            .ForMember(archNote => archNote.Id, options => options.Ignore())
+            .ForMember(archNote => archNote.ArchiveSubNotes, options => options.MapFrom(note => note.SubNotes));
 
         CreateMap<ArchiveNote, Note>()
             .ForMember(note => note.Id, options => options.Ignore())

@@ -7,7 +7,7 @@ public class ArchiveSubNoteMappingProfile : Profile
 {
     public ArchiveSubNoteMappingProfile()
     {
-        CreateMap<ArchiveSubNote, ArchivedSubNoteDto>();
+        CreateMap<ArchiveSubNote, ArchiveSubNoteDto>();
         
         CreateMap<SubNote, ArchiveSubNote>()
             .ForMember(arcSubNote => arcSubNote.Id, options => options.Ignore())
