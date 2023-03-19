@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using LifeHelper.Services.Areas.User;
-using LifeHelper.Services.Areas.User.DTOs;
+using LifeHelper.Services.Areas.Users;
+using LifeHelper.Services.Areas.Users.DTOs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

@@ -54,7 +54,7 @@ public class NoteService : INoteService
         var note = _mapper.Map<Note>(noteInput);
 
         note.CreatedDate = DateTime.UtcNow;
-        note.UpdatedDate = DateTime.UtcNow;
+
         note.UserId = _currentUserInfo.Id;
 
         await _dbContext.Notes.AddAsync(note);
@@ -72,8 +72,6 @@ public class NoteService : INoteService
 
         _mapper.Map(noteInput, note);
         
-        note.UpdatedDate = DateTime.UtcNow;
-
         _dbContext.Notes.Update(note);
         await _dbContext.SaveChangesAsync();
         

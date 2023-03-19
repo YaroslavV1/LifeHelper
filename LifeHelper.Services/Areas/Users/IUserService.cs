@@ -1,6 +1,6 @@
-﻿using LifeHelper.Services.Areas.User.DTOs;
+﻿using LifeHelper.Services.Areas.Users.DTOs;
 
-namespace LifeHelper.Services.Areas.User;
+namespace LifeHelper.Services.Areas.Users;
 
 public interface IUserService
 {
