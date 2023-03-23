@@ -16,6 +16,8 @@ public class UserMoneyService : IUserMoneyService
     private readonly LifeHelperDbContext _context;
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
+    private const decimal MinAmount = -999_999_999.99m;
+    private const decimal MaxAmount = 999_999_999.99m;
 
     public UserMoneyService(
         LifeHelperDbContext context,
@@ -42,7 +44,7 @@ public class UserMoneyService : IUserMoneyService
         var userMoney = await _context.UserMonies.FirstOrDefaultAsync(monies => monies.UserId == _currentUserInfo.Id)
             ?? throw new NotFoundException("User money was not found!");
 
-        decimal totalAmountOfMoney = userMoney.Money + moneyInput.Money;
+        decimal totalAmountOfMoney = userMoney.Money + moneyInput.Amount;
         
         ThrowIfDecimalOutOfRange(totalAmountOfMoney);
         
@@ -58,7 +60,7 @@ public class UserMoneyService : IUserMoneyService
         var userMoney = await _context.UserMonies.FirstOrDefaultAsync(monies => monies.UserId == _currentUserInfo.Id)
                         ?? throw new NotFoundException("User money was not found!");
 
-        decimal totalAmountOfMoney = userMoney.Money - moneyInput.Money;
+        decimal totalAmountOfMoney = userMoney.Money - moneyInput.Amount;
         
         ThrowIfDecimalOutOfRange(totalAmountOfMoney);
         
@@ -74,9 +76,9 @@ public class UserMoneyService : IUserMoneyService
         var userMoney = await _context.UserMonies.FirstOrDefaultAsync(monies => monies.UserId == _currentUserInfo.Id)
                         ?? throw new NotFoundException("User money was not found!");
 
-        ThrowIfDecimalOutOfRange(moneyInput.Money);
+        ThrowIfDecimalOutOfRange(moneyInput.Amount);
         
-        await UpdateUserMoneyAsync(userMoney, moneyInput.Money);
+        await UpdateUserMoneyAsync(userMoney, moneyInput.Amount);
         
         var userMoneyDto = _mapper.Map<UserMoneyDto>(userMoney);
 
@@ -90,12 +92,9 @@ public class UserMoneyService : IUserMoneyService
         await _context.SaveChangesAsync();
     }
 
-    private void ThrowIfDecimalOutOfRange(decimal money)
+    private void ThrowIfDecimalOutOfRange(decimal amount)
     {
-        decimal minValue = -999_999_999.99m;
-        decimal maxValue = 999_999_999.99m;
-        
-        if (money >= maxValue || money <= minValue)
+        if (amount >= MaxAmount || amount <= MinAmount)
         {
             throw new BadRequestException("Amount of money is not included in the allowed values");
         }

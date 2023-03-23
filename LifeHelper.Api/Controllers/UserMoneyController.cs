@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifeHelper.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/userMoney")]
 [Produces(MediaTypeNames.Application.Json)]
 [Authorize]
 public class UserMoneyController : ControllerBase

@@ -7,6 +7,7 @@ public class UserMoneyMappingProfile : Profile
 {
     public UserMoneyMappingProfile()
     {
-        CreateMap<UserMoney, UserMoneyDto>();
+        CreateMap<UserMoney, UserMoneyDto>()
+            .ForMember(moneyInput => moneyInput.Amount, options => options.MapFrom(userMoney => userMoney.Money));
     }
 }

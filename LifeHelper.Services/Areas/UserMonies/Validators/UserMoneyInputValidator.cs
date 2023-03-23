@@ -5,15 +5,15 @@ namespace LifeHelper.Services.Areas.UserMonies.Validators;
 
 public class UserMoneyInputValidator : AbstractValidator<UserMoneyInputDto>
 {
-    private const decimal MinimumValue = 0;
-    private const decimal MaximumValue = 999_999_999.99m;
+    private const decimal MinimumAmount = 0;
+    private const decimal MaximumAmount = 999_999_999.99m;
     
     public UserMoneyInputValidator()
     {
-        RuleFor(money => money.Money)
-            .GreaterThanOrEqualTo(MinimumValue)
+        RuleFor(money => money.Amount)
+            .GreaterThanOrEqualTo(MinimumAmount)
             .WithMessage("Enter a value that is greater than or equal to {ComparisonValue}")
-            .LessThanOrEqualTo(MaximumValue)
+            .LessThanOrEqualTo(MaximumAmount)
             .WithMessage("Enter a value that is less than or equal to {ComparisonValue}");
     }
 }
