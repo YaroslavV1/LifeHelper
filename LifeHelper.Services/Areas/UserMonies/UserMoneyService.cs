@@ -16,8 +16,8 @@ public class UserMoneyService : IUserMoneyService
     private readonly LifeHelperDbContext _context;
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
-    private const decimal MinAmount = -999_999_999.99m;
-    private const decimal MaxAmount = 999_999_999.99m;
+    private const decimal MinimumAmount = -999_999_999.99m;
+    private const decimal MaximumAmount = 999_999_999.99m;
 
     public UserMoneyService(
         LifeHelperDbContext context,
@@ -44,11 +44,11 @@ public class UserMoneyService : IUserMoneyService
         var userMoney = await _context.UserMonies.FirstOrDefaultAsync(monies => monies.UserId == _currentUserInfo.Id)
             ?? throw new NotFoundException("User money was not found!");
 
-        decimal totalAmountOfMoney = userMoney.Money + moneyInput.Amount;
+        decimal totalAmountMoney = userMoney.Money + moneyInput.Amount;
         
-        ThrowIfDecimalOutOfRange(totalAmountOfMoney);
+        ThrowIfDecimalOutOfRange(totalAmountMoney);
         
-        await UpdateUserMoneyAsync(userMoney, totalAmountOfMoney);
+        await UpdateUserMoneyAsync(userMoney, totalAmountMoney);
 
         var userMoneyDto = _mapper.Map<UserMoneyDto>(userMoney);
 
@@ -60,11 +60,11 @@ public class UserMoneyService : IUserMoneyService
         var userMoney = await _context.UserMonies.FirstOrDefaultAsync(monies => monies.UserId == _currentUserInfo.Id)
                         ?? throw new NotFoundException("User money was not found!");
 
-        decimal totalAmountOfMoney = userMoney.Money - moneyInput.Amount;
+        decimal totalAmountMoney = userMoney.Money - moneyInput.Amount;
         
-        ThrowIfDecimalOutOfRange(totalAmountOfMoney);
+        ThrowIfDecimalOutOfRange(totalAmountMoney);
         
-        await UpdateUserMoneyAsync(userMoney, totalAmountOfMoney);
+        await UpdateUserMoneyAsync(userMoney, totalAmountMoney);
 
         var userMoneyDto = _mapper.Map<UserMoneyDto>(userMoney);
 
@@ -94,7 +94,7 @@ public class UserMoneyService : IUserMoneyService
 
     private void ThrowIfDecimalOutOfRange(decimal amount)
     {
-        if (amount >= MaxAmount || amount <= MinAmount)
+        if (amount >= MaximumAmount || amount <= MinimumAmount)
         {
             throw new BadRequestException("Amount of money is not included in the allowed values");
         }
