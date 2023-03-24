@@ -1,4 +1,4 @@
-﻿using LifeHelper.Services.Areas.User.DTOs;
+﻿using LifeHelper.Services.Areas.Users.DTOs;
 
 namespace LifeHelper.Services.Areas.Authentication;
 

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LifeHelper.Services.Areas.User.Validators;
+namespace LifeHelper.Services.Areas.Users.Validators;
 
 public static class ValidatorExtensions
 {

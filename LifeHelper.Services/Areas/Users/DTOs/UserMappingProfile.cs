@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
+using LifeHelper.Infrastructure.Entities;
 
-namespace LifeHelper.Services.Areas.User.DTOs;
-
-using Infrastructure.Entities;
+namespace LifeHelper.Services.Areas.Users.DTOs;
 
 public class UserMappingProfile: Profile
 {

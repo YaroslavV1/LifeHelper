@@ -4,6 +4,7 @@ using LifeHelper.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifeHelper.Infrastructure.Migrations
 {
     [DbContext(typeof(LifeHelperDbContext))]
-    partial class LifeHelperDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230318111910_AddUserMoney")]
+    partial class AddUserMoney
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ArchiveNotes", (string)null);
+                    b.ToTable("ArchiveNotes");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.ArchiveSubNote", b =>
@@ -73,7 +76,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasIndex("ArchiveNoteId");
 
-                    b.ToTable("ArchiveSubNotes", (string)null);
+                    b.ToTable("ArchiveSubNotes");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Note", b =>
@@ -105,7 +108,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notes", (string)null);
+                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Role", b =>
@@ -125,7 +128,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -167,7 +170,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasIndex("NoteId");
 
-                    b.ToTable("SubNotes", (string)null);
+                    b.ToTable("SubNotes");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.User", b =>
@@ -192,7 +195,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.UserMoney", b =>
@@ -215,7 +218,7 @@ namespace LifeHelper.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserMonies", (string)null);
+                    b.ToTable("UserMonies");
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -230,7 +233,7 @@ namespace LifeHelper.Infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("RoleUser", (string)null);
+                    b.ToTable("RoleUser");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.ArchiveNote", b =>

@@ -1,6 +1,6 @@
 ﻿using System.Net.Mime;
 using LifeHelper.Services.Areas.Authentication;
-using LifeHelper.Services.Areas.User.DTOs;
+using LifeHelper.Services.Areas.Users.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

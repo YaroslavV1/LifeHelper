@@ -1,4 +1,4 @@
-﻿namespace LifeHelper.Services.Areas.User.DTOs;
+﻿namespace LifeHelper.Services.Areas.Users.DTOs;
 
 public class UserLoginDto
 {
