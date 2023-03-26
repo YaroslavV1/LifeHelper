@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace LifeHelper.Services.Areas.Helpers.Jwt;
 
-using Infrastructure.Entities;
 public class ClaimParserService : IClaimParserService
 {
     public TokenInfoDto ParseInfoFromClaims(HttpContext context)

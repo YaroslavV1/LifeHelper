@@ -58,7 +58,7 @@ public class UserService : IUserService
                        user.Nickname.ToLower() == loginDto.Login.ToLower() || user.Email == loginDto.Login) 
                ?? throw new NotFoundException($"User with Login: {loginDto.Login} not found");
         
-        if (!VerifyHashedPasswordAsync(loggedInUser.Id, loginDto.Password).Result)
+        if (!await VerifyHashedPasswordAsync(loggedInUser.Id, loginDto.Password))
         {
             throw new BadRequestException("Passwords don't match");
         }
@@ -68,7 +68,7 @@ public class UserService : IUserService
 
     public async Task<UserDto> CreateAsync(UserInputDto userInputDto)
     {
-        if (!CheckIfEmailIsAvailableAsync(userInputDto.Email).Result)
+        if (!await CheckIfEmailIsAvailableAsync(userInputDto.Email))
         {
             throw new BadRequestException("A user with this mail already exists");
         }
@@ -93,7 +93,7 @@ public class UserService : IUserService
 
         CheckPermissionAccess(user.Id);
         
-        if (! await CheckIfEmailIsAvailableAsync(userInputDto.Email))
+        if (!await CheckIfEmailIsAvailableAsync(userInputDto.Email))
         {
             throw new BadRequestException("The user with this mail is already exists");
         }
