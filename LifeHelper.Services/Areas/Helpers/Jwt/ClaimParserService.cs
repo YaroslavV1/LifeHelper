@@ -10,7 +10,8 @@ public class ClaimParserService : IClaimParserService
     {
         return new TokenInfoDto
         {
-            Id = Convert.ToInt32(context.User.FindFirstValue(ClaimTypes.NameIdentifier))
+            Id = Convert.ToInt32(context.User.FindFirstValue(ClaimTypes.NameIdentifier)),
+            Role = Convert.ToString(context.User.FindFirstValue(ClaimTypes.Role))
         };
     }
 }

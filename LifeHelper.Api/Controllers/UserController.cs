@@ -1,6 +1,6 @@
 ﻿using System.Net.Mime;
-using LifeHelper.Services.Areas.User;
-using LifeHelper.Services.Areas.User.DTOs;
+using LifeHelper.Services.Areas.Users;
+using LifeHelper.Services.Areas.Users.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +10,7 @@ namespace LifeHelper.Api.Controllers;
 [ApiController]
 [Route("api/users")]
 [Produces(MediaTypeNames.Application.Json)]
-[Authorize(Roles = "Admin")]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -19,20 +19,21 @@ public class UserController : ControllerBase
     {
         _userService = userService;
     }
-    
+
     /// <summary>
     /// Get the List of Users
     /// </summary>
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(IList<UserDto>), StatusCodes.Status200OK)]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetListAsync()
     {
         var users = await _userService.GetListAsync();
 
         return Ok(users);
     }
-    
+
     /// <summary>
     /// Get the User by Id
     /// </summary>
@@ -54,6 +55,7 @@ public class UserController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateAsync([FromBody] UserInputDto userInputDto)
     {
         var user = await _userService.CreateAsync(userInputDto);
