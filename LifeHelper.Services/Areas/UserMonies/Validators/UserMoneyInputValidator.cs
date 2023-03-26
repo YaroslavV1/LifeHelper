@@ -1,4 +1,5 @@
 using FluentValidation;
+using LifeHelper.Services.Areas.Helpers.Validators;
 using LifeHelper.Services.Areas.UserMonies.DTOs;
 
 namespace LifeHelper.Services.Areas.UserMonies.Validators;
@@ -10,10 +11,6 @@ public class UserMoneyInputValidator : AbstractValidator<UserMoneyInputDto>
     
     public UserMoneyInputValidator()
     {
-        RuleFor(money => money.Amount)
-            .GreaterThanOrEqualTo(MinimumAmount)
-            .WithMessage("Enter a value that is greater than or equal to {ComparisonValue}")
-            .LessThanOrEqualTo(MaximumAmount)
-            .WithMessage("Enter a value that is less than or equal to {ComparisonValue}");
+        RuleFor(money => money.Amount).Range(MinimumAmount, MaximumAmount);
     }
 }

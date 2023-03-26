@@ -14,7 +14,8 @@ public class LifeHelperDbContext : DbContext
     public DbSet<ArchiveNote> ArchiveNotes { get; set; }
     public DbSet<ArchiveSubNote> ArchiveSubNotes { get; set; }
     public DbSet<Role> Roles { get; set; }
-    
+    public DbSet<Category> Categories { get; set; }
+
     public LifeHelperDbContext(DbContextOptions<LifeHelperDbContext> options, IRoleSeeder roleSeeder) : base(options)
     {
         _roleSeeder = roleSeeder;
@@ -22,11 +23,6 @@ public class LifeHelperDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<UserMoney>()
-            .Property(money => money.Money)
-            .HasColumnType("decimal(12, 2)") 
-            .HasPrecision(12, 2);
-        
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(LifeHelperDbContext).Assembly);
         _roleSeeder.Seed(modelBuilder);
