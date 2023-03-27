@@ -53,7 +53,7 @@ public class CategoryService : ICategoryService
     {
         var category = _mapper.Map<Category>(categoryInput);
         
-        await ThrowIfTitleExists(categoryInput.Title, category.Id);
+        await ThrowIfTitleExistsAsync(categoryInput.Title, category.Id);
        
         category.UserId = _currentUserInfo.Id;
        
@@ -61,6 +61,7 @@ public class CategoryService : ICategoryService
         await _dbContext.SaveChangesAsync();
        
         var categoryDto = _mapper.Map<CategoryDto>(category);
+        
         return categoryDto;
     }
 
@@ -70,7 +71,7 @@ public class CategoryService : ICategoryService
                            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == _currentUserInfo.Id) 
                        ?? throw new NotFoundException($"Category with Id: {id} not found");
 
-        await ThrowIfTitleExists(categoryInput.Title, category.Id);
+        await ThrowIfTitleExistsAsync(categoryInput.Title, category.Id);
         
         _mapper.Map(categoryInput, category);
         
@@ -78,6 +79,7 @@ public class CategoryService : ICategoryService
         await _dbContext.SaveChangesAsync();
         
         var categoryDto = _mapper.Map<CategoryDto>(category);
+        
         return categoryDto;
     }
 
@@ -91,7 +93,7 @@ public class CategoryService : ICategoryService
         await _dbContext.SaveChangesAsync();
     }
 
-    private async Task ThrowIfTitleExists(string title, int id)
+    private async Task ThrowIfTitleExistsAsync(string title, int id)
     {
         var isTitleExists = await _dbContext.Categories
             .Where(category => category.UserId == _currentUserInfo.Id)

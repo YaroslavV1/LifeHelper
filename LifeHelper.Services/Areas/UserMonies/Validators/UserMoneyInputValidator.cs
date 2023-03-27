@@ -6,7 +6,7 @@ namespace LifeHelper.Services.Areas.UserMonies.Validators;
 
 public class UserMoneyInputValidator : AbstractValidator<UserMoneyInputDto>
 {
-    private const decimal MinimumAmount = 0;
+    private const decimal MinimumAmount = decimal.Zero;
     private const decimal MaximumAmount = 999_999_999.99m;
     
     public UserMoneyInputValidator()

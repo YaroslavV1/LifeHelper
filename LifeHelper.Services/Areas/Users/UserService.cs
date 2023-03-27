@@ -55,7 +55,8 @@ public class UserService : IUserService
                    .Include(user => user.Roles)
                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                    .FirstOrDefaultAsync(user => 
-                       user.Nickname.ToLower() == loginDto.Login.ToLower() || user.Email == loginDto.Login) 
+                       user.Nickname.ToLower() == loginDto.Login.ToLower() ||
+                       user.Email.ToLower() == loginDto.Login.ToLower()) 
                ?? throw new NotFoundException($"User with Login: {loginDto.Login} not found");
         
         if (!await VerifyHashedPasswordAsync(loggedInUser.Id, loginDto.Password))
@@ -68,12 +69,10 @@ public class UserService : IUserService
 
     public async Task<UserDto> CreateAsync(UserInputDto userInputDto)
     {
-        if (!await CheckIfEmailIsAvailableAsync(userInputDto.Email))
-        {
-            throw new BadRequestException("A user with this mail already exists");
-        }
-        
         var user = _mapper.Map<User>(userInputDto);
+
+        await ThrowIfEmailIsNotAvailableAsync(userInputDto.Email, user.Id);
+            
         var userDto = _mapper.Map<UserDto>(user);
         
         user.PasswordHash = await HashPasswordAsync(user, userInputDto.Password);
@@ -93,10 +92,7 @@ public class UserService : IUserService
 
         CheckPermissionAccess(user.Id);
         
-        if (!await CheckIfEmailIsAvailableAsync(userInputDto.Email))
-        {
-            throw new BadRequestException("The user with this mail is already exists");
-        }
+        await ThrowIfEmailIsNotAvailableAsync(userInputDto.Email, user.Id);
 
         userInputDto.Password = await HashPasswordAsync(user, userInputDto.Password);
         
@@ -128,11 +124,15 @@ public class UserService : IUserService
         }
     }
     
-    private async Task<bool> CheckIfEmailIsAvailableAsync(string email)
+    private async Task ThrowIfEmailIsNotAvailableAsync(string email, int id)
     {
-        return await _dbContext.Users
-            .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(user => user.Email == email) is null;
+        var isEmailExists = await _dbContext.Users
+            .AnyAsync(user => user.Email.ToLower() == email.ToLower() && user.Id != id);
+
+        if (isEmailExists)
+        {
+            throw new BadRequestException("The user with this mail is already exists");
+        }
     }
     
     public async Task<bool> VerifyHashedPasswordAsync(int userId, string password)
