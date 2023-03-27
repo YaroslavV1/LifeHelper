@@ -7,6 +7,7 @@ using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Seeders;
 using LifeHelper.Services.Areas.Archive;
 using LifeHelper.Services.Areas.Authentication;
+using LifeHelper.Services.Areas.Categories;
 using LifeHelper.Services.Areas.Helpers.Jwt;
 using LifeHelper.Services.Areas.Notes;
 using LifeHelper.Services.Areas.SubNotes;
@@ -100,6 +101,7 @@ builder.Services.AddTransient<INoteService, NoteService>();
 builder.Services.AddTransient<ISubNoteService, SubNoteService>();
 builder.Services.AddTransient<IArchiveService, ArchiveService>();
 builder.Services.AddTransient<IUserMoneyService, UserMoneyService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 
 var app = builder.Build();

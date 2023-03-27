@@ -16,7 +16,7 @@ public class User
         UserMoney = new UserMoney
         {
             UserId = Id,
-            Money = 0
+            Money = decimal.Zero
         };
     }
 }

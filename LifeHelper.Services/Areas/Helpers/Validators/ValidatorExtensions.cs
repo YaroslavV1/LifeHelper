@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LifeHelper.Services.Areas.Users.Validators;
+namespace LifeHelper.Services.Areas.Helpers.Validators;
 
 public static class ValidatorExtensions
 {
@@ -17,5 +17,14 @@ public static class ValidatorExtensions
     public static IRuleBuilderOptions<T, string> IsRequired<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder.NotEmpty().WithMessage("{PropertyName} is required");
+    }
+
+    public static IRuleBuilderOptions<T, decimal> Range<T>(this IRuleBuilder<T, decimal> ruleBuilder, decimal minimumAmount, decimal maximumAmount)
+    {
+        return ruleBuilder
+            .GreaterThanOrEqualTo(minimumAmount)
+                .WithMessage("Enter a value that is greater than or equal to {ComparisonValue}")
+                .LessThanOrEqualTo(maximumAmount)
+                .WithMessage("Enter a value that is less than or equal to {ComparisonValue}");
     }
 }
