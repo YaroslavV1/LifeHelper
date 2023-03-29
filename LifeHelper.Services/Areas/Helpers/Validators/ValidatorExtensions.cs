@@ -14,7 +14,7 @@ public static class ValidatorExtensions
             .Matches("[A-Z]").WithMessage("{PropertyName} must least one uppercase character");
     }
 
-    public static IRuleBuilderOptions<T, string> IsRequired<T>(this IRuleBuilder<T, string> ruleBuilder)
+    public static IRuleBuilderOptions<T, TProperty> IsRequired<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder)
     {
         return ruleBuilder.NotEmpty().WithMessage("{PropertyName} is required");
     }

@@ -1,4 +1,6 @@
-﻿namespace LifeHelper.Infrastructure.Entities;
+﻿using System.Collections;
+
+namespace LifeHelper.Infrastructure.Entities;
 
 public class User
 {
@@ -10,6 +12,7 @@ public class User
     public UserMoney UserMoney { get; set; }
     public ICollection<Role> Roles { get; set; }
     public ICollection<Note> Notes { get; set; }
+    public ICollection<Category> Categories { get; set; }
 
     public User()
     {
