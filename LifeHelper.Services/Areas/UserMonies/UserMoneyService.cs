@@ -37,7 +37,7 @@ public class UserMoneyService : IUserMoneyService
             .ProjectTo<UserMoneyDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync()
             ?? throw new NotFoundException("User money was not found!");
-        }
+    }
 
     public async Task<UserMoneyDto> AddAsync(UserMoneyInputDto moneyInput)
     {

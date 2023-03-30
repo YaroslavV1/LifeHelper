@@ -31,7 +31,7 @@ public class ExpenseService : IExpenseService
     
     public async Task<IList<ExpenseDto>> GetListAsync(int categoryId)
     {
-        await ThrowIfCategoryIsNotExists(categoryId);
+        await ThrowIfCategoryIsNotExistsAsync(categoryId);
             
         var expenses = await _dbContext.Expenses
             .Where(expense => expense.CategoryId == categoryId)
@@ -43,7 +43,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<ExpenseDto> GetByIdAsync(int categoryId, int id)
     {
-        await ThrowIfCategoryIsNotExists(categoryId);
+        await ThrowIfCategoryIsNotExistsAsync(categoryId);
 
         var expense = await _dbContext.Expenses
                           .Where(expense => expense.CategoryId == categoryId)
@@ -56,7 +56,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<ExpenseDto> CreateAsync(ExpenseInputDto expenseInput)
     {
-        await ThrowIfCategoryIsNotExists(expenseInput.CategoryId);
+        await ThrowIfCategoryIsNotExistsAsync(expenseInput.CategoryId);
 
         var expense = _mapper.Map<Expense>(expenseInput);
 
@@ -72,7 +72,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<ExpenseDto> UpdateByIdAsync(int id, ExpenseInputDto expenseInput)
     {
-        await ThrowIfCategoryIsNotExists(expenseInput.CategoryId);
+        await ThrowIfCategoryIsNotExistsAsync(expenseInput.CategoryId);
         
         var expense = await _dbContext.Expenses.
                           FirstOrDefaultAsync(expense => expense.Id == id && expense.CategoryId == expenseInput.CategoryId) 
@@ -94,7 +94,7 @@ public class ExpenseService : IExpenseService
 
     public async Task DeleteByIdAsync(int categoryId, int id)
     {
-        await ThrowIfCategoryIsNotExists(categoryId);
+        await ThrowIfCategoryIsNotExistsAsync(categoryId);
         
         var expense = await _dbContext.Expenses
                           .FirstOrDefaultAsync(expense => expense.Id == id && expense.CategoryId == categoryId)
@@ -108,7 +108,7 @@ public class ExpenseService : IExpenseService
         await _dbContext.SaveChangesAsync();
     }
 
-    private async Task ThrowIfCategoryIsNotExists(int categoryId)
+    private async Task ThrowIfCategoryIsNotExistsAsync(int categoryId)
     {
         var user = await _dbContext.Users
             .Include(user => user.Categories)
@@ -142,13 +142,9 @@ public class ExpenseService : IExpenseService
 
     private void ThrowIfMoneyOutOfRange(decimal userMoney, decimal moneyLimit)
     {
-        if(userMoney < MinimumAmount)
+        if(userMoney < MinimumAmount || moneyLimit < MinimumAmount)
         {
-            throw new BadRequestException("User money is out of range");
-        }
-        if(moneyLimit < MinimumAmount)
-        {
-            throw new BadRequestException("Category money limit is out of range");
+            throw new BadRequestException("User money or category money limit is out of range");
         }
     }
 }
