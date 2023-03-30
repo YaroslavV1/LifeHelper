@@ -8,4 +8,5 @@ public class Category
     
     public int UserId { get; set; }
     public User User { get; set; }
+    public ICollection<Expense> Expenses { get; set; }
 }
