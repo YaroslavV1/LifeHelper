@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Entities;
 using LifeHelper.Infrastructure.Exceptions;
+using LifeHelper.Services.Areas.Categories;
 using LifeHelper.Services.Areas.Helpers.Jwt;
 using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
 using LifeHelper.Services.Areas.Users.DTOs;
@@ -17,17 +18,20 @@ public class UserService : IUserService
 {
     private readonly LifeHelperDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly ICategoryService _categoryService;
     private readonly PasswordHasher<User> _passwordHasher;
     private readonly TokenInfoDto _currentUserInfo;
 
     public UserService(
         LifeHelperDbContext dbContext,
         IMapper mapper,
+        ICategoryService categoryService,
         IHttpContextAccessor contextAccessor,
         IClaimParserService claimParserService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _categoryService = categoryService;
         _passwordHasher = new PasswordHasher<User>();
         _currentUserInfo = claimParserService.ParseInfoFromClaims(contextAccessor.HttpContext);
     }
@@ -80,6 +84,8 @@ public class UserService : IUserService
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
 
+        await _categoryService.CreateDefaultCategoriesAsync(user.Id);
+        
         await AddRoleToUser(user.Id, "User");
 
         return userDto;

@@ -65,6 +65,24 @@ public class CategoryService : ICategoryService
         return categoryDto;
     }
 
+    public async Task CreateDefaultCategoriesAsync(int userId)
+    {
+        var defaultCategories = new List<Category>
+        {
+            new Category { Title = "Foods", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Family", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Housing", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Health", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Transport", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Clothing", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Clothing", MoneyLimit = 0, UserId = userId },
+            new Category { Title = "Others", MoneyLimit = 0, UserId = userId },
+        };
+
+        await _dbContext.Categories.AddRangeAsync(defaultCategories);
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task<CategoryDto> UpdateByIdAsync(int id, CategoryInputDto categoryInput)
     {
         var category = await _dbContext.Categories
