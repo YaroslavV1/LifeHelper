@@ -10,5 +10,4 @@ public interface IUserService
     public Task<UserDto> CreateAsync(UserInputDto userInputDto);
     public Task<UserDto> UpdateByIdAsync(int id, UserInputDto userInputDto);
     public Task DeleteByIdAsync(int id);
-    public Task<bool> VerifyHashedPasswordAsync(int userId, string password);
 }

@@ -79,7 +79,7 @@ public class UserService : IUserService
         
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
-
+        
         await AddRoleToUser(user.Id, "User");
 
         return userDto;
@@ -135,7 +135,7 @@ public class UserService : IUserService
         }
     }
     
-    public async Task<bool> VerifyHashedPasswordAsync(int userId, string password)
+    private async Task<bool> VerifyHashedPasswordAsync(int userId, string password)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == userId)
             ?? throw new NotFoundException($"User with Id: {userId} not found");

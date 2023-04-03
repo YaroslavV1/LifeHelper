@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using LifeHelper.Infrastructure.Enums;
 
 namespace LifeHelper.Infrastructure.Entities;
 
@@ -21,5 +21,13 @@ public class User
             UserId = Id,
             Money = decimal.Zero
         };
+        
+        Categories = ((CategoryTitle[])Enum.GetValues(typeof(CategoryTitle)))
+            .Select(categoryTitle => new Category
+            {
+                UserId = Id,
+                Title = categoryTitle.ToString().Normalize(),
+                MoneyLimit = decimal.Zero
+            }).ToList();
     }
 }
