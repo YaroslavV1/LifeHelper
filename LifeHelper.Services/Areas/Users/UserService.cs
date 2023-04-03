@@ -3,7 +3,6 @@ using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Entities;
 using LifeHelper.Infrastructure.Exceptions;
-using LifeHelper.Services.Areas.Categories;
 using LifeHelper.Services.Areas.Helpers.Jwt;
 using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
 using LifeHelper.Services.Areas.Users.DTOs;
@@ -18,7 +17,6 @@ public class UserService : IUserService
 {
     private readonly LifeHelperDbContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly ICategoryService _categoryService;
     private readonly PasswordHasher<User> _passwordHasher;
     private readonly TokenInfoDto _currentUserInfo;
 
@@ -137,7 +135,7 @@ public class UserService : IUserService
         }
     }
     
-    public async Task<bool> VerifyHashedPasswordAsync(int userId, string password)
+    private async Task<bool> VerifyHashedPasswordAsync(int userId, string password)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == userId)
             ?? throw new NotFoundException($"User with Id: {userId} not found");
