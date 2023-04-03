@@ -7,6 +7,7 @@ namespace LifeHelper.Infrastructure;
 public class LifeHelperDbContext : DbContext
 {
     private readonly IRoleSeeder _roleSeeder;
+    
     public DbSet<User> Users { get; set; }
     public DbSet<UserMoney> UserMonies { get; set; }
     public DbSet<Note> Notes { get; set; }

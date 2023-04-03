@@ -25,13 +25,11 @@ public class UserService : IUserService
     public UserService(
         LifeHelperDbContext dbContext,
         IMapper mapper,
-        ICategoryService categoryService,
         IHttpContextAccessor contextAccessor,
         IClaimParserService claimParserService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _categoryService = categoryService;
         _passwordHasher = new PasswordHasher<User>();
         _currentUserInfo = claimParserService.ParseInfoFromClaims(contextAccessor.HttpContext);
     }
@@ -83,8 +81,6 @@ public class UserService : IUserService
         
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
-
-        await _categoryService.CreateDefaultCategoriesAsync(user.Id);
         
         await AddRoleToUser(user.Id, "User");
 
