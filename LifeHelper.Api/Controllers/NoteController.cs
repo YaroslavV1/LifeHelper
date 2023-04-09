@@ -26,7 +26,7 @@ public class NoteController : ControllerBase
     /// <returns>List of Notes</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IList<NoteDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetListAsync([FromQuery] bool isDescending = true)
+    public async Task<IActionResult> GetListAsync([FromQuery] bool? isDescending)
     {
         var notes = await _noteService.GetListAsync(isDescending);
 
@@ -53,12 +53,12 @@ public class NoteController : ControllerBase
     /// <param name="noteInput"></param>
     /// <returns>Created Note</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(NoteDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateAsync([FromBody] NoteInputDto noteInput)
     {
         var note = await _noteService.CreateAsync(noteInput);
 
-        return CreatedAtAction("GetById", new { id = note.Id }, note);
+        return Ok(note);
     }
 
     /// <summary>

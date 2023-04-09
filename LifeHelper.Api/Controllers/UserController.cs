@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LifeHelper.Api.Controllers;
 
-
 [ApiController]
 [Route("api/users")]
 [Produces(MediaTypeNames.Application.Json)]
@@ -54,13 +53,13 @@ public class UserController : ControllerBase
     /// <param name="userInputDto"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateAsync([FromBody] UserInputDto userInputDto)
     {
         var user = await _userService.CreateAsync(userInputDto);
 
-        return CreatedAtAction("GetById", new { id = user.Id }, user);
+        return Ok(user);
     }
 
     /// <summary>

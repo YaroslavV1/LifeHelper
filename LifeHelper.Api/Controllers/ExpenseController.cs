@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifeHelper.Api.Controllers;
 
 [ApiController]
-[Route("api/expense")]
+[Route("api/expenses")]
 [Produces(MediaTypeNames.Application.Json)]
 [Authorize]
 public class ExpenseController : ControllerBase
@@ -36,12 +36,12 @@ public class ExpenseController : ControllerBase
     /// Get the Expense by Category ID and Expense ID
     /// </summary>
     /// <param name="categoryId">Enter the Category ID</param>
-    /// <param name="id">Enter the Expense ID</param>
+    /// <param name="expenseId">Enter the Expense ID</param>
     /// <returns>Expense</returns>
-    [HttpGet("{categoryId:int}/{id:int}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] int categoryId, [FromRoute] int id)
+    [HttpGet("{categoryId:int}/{expenseId:int}")]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] int categoryId, [FromRoute] int expenseId)
     {
-        var expense = await _expenseService.GetByIdAsync(categoryId, id);
+        var expense = await _expenseService.GetByIdAsync(categoryId, expenseId);
 
         return Ok(expense);
     }
@@ -62,13 +62,13 @@ public class ExpenseController : ControllerBase
     /// <summary>
     /// Update the Expense of the Category
     /// </summary>
-    /// <param name="id">Enter the Expense ID</param>
+    /// <param name="expenseId">Enter the Expense ID</param>
     /// <param name="expenseInput"></param>
     /// <returns>Updated Expense</returns>
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateByIdAsync([FromRoute] int id, [FromBody] ExpenseInputDto expenseInput)
+    [HttpPut("{expenseId:int}")]
+    public async Task<IActionResult> UpdateByIdAsync([FromRoute] int expenseId, [FromBody] ExpenseInputDto expenseInput)
     {
-        var expense = await _expenseService.UpdateByIdAsync(id, expenseInput);
+        var expense = await _expenseService.UpdateByIdAsync(expenseId, expenseInput);
 
         return Ok(expense);
     }
@@ -77,12 +77,12 @@ public class ExpenseController : ControllerBase
     /// Delete the Expense by Category ID and Expense ID
     /// </summary>
     /// <param name="categoryId">Enter the Category ID</param>
-    /// <param name="id">Enter the Expense ID</param>
+    /// <param name="expenseId">Enter the Expense ID</param>
     /// <returns></returns>
-    [HttpDelete("{categoryId:int}/{id:int}")]
-    public async Task<IActionResult> DeleteByIdAsync([FromRoute] int categoryId, [FromRoute] int id)
+    [HttpDelete("{categoryId:int}/{expenseId:int}")]
+    public async Task<IActionResult> DeleteByIdAsync([FromRoute] int categoryId, [FromRoute] int expenseId)
     {
-        await _expenseService.DeleteByIdAsync(categoryId, id);
+        await _expenseService.DeleteByIdAsync(categoryId, expenseId);
 
         return Ok();
     }

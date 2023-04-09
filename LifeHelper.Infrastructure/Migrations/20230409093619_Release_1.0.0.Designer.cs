@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LifeHelper.Infrastructure.Migrations
 {
     [DbContext(typeof(LifeHelperDbContext))]
-    [Migration("20230318111910_AddUserMoney")]
-    partial class AddUserMoney
+    [Migration("20230409093619_Release_1.0.0")]
+    partial class Release_100
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,60 @@ namespace LifeHelper.Infrastructure.Migrations
                     b.ToTable("ArchiveSubNotes");
                 });
 
+            modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("MoneyLimit")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12, 2)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Expense", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("SpentMoney")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12, 2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Expenses");
+                });
+
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Note", b =>
                 {
                     b.Property<int>("Id")
@@ -142,12 +196,6 @@ namespace LifeHelper.Infrastructure.Migrations
                             Id = 2,
                             NormalName = "User",
                             RoleName = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            NormalName = "Guest",
-                            RoleName = 3
                         });
                 });
 
@@ -207,8 +255,8 @@ namespace LifeHelper.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Money")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18, 2)");
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12, 2)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -256,6 +304,28 @@ namespace LifeHelper.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("ArchiveNote");
+                });
+
+            modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Category", b =>
+                {
+                    b.HasOne("LifeHelper.Infrastructure.Entities.User", "User")
+                        .WithMany("Categories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Expense", b =>
+                {
+                    b.HasOne("LifeHelper.Infrastructure.Entities.Category", "Category")
+                        .WithMany("Expenses")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Note", b =>
@@ -311,6 +381,11 @@ namespace LifeHelper.Infrastructure.Migrations
                     b.Navigation("ArchiveSubNotes");
                 });
 
+            modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Category", b =>
+                {
+                    b.Navigation("Expenses");
+                });
+
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.Note", b =>
                 {
                     b.Navigation("SubNotes");
@@ -318,6 +393,8 @@ namespace LifeHelper.Infrastructure.Migrations
 
             modelBuilder.Entity("LifeHelper.Infrastructure.Entities.User", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Notes");
 
                     b.Navigation("UserMoney")

@@ -1,4 +1,4 @@
-namespace LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
+namespace LifeHelper.Services.Utilities.DTOs;
 
 public class TokenInfoDto
 {

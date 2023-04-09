@@ -1,12 +1,14 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using LifeHelper.Api.Models;
-using LifeHelper.Infrastructure.Exceptions;
+using LifeHelper.Services.Exceptions;
 
 namespace LifeHelper.Api.Middlewares;
 
 public class ExceptionHandlerMiddleware
 {
+    private const HttpStatusCode InternalServerError = HttpStatusCode.InternalServerError;
+    
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
@@ -42,8 +44,8 @@ public class ExceptionHandlerMiddleware
         }
         else
         {
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            errorModel.ErrorMessage = "Internal Server Error";
+            context.Response.StatusCode = (int)InternalServerError;
+            errorModel.ErrorMessage = InternalServerError.ToString();
         }
 
         await context.Response.WriteAsJsonAsync(errorModel);
