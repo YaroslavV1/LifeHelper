@@ -2,12 +2,13 @@
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Entities;
-using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.Expenses.DTOs;
-using LifeHelper.Services.Areas.Helpers.Jwt;
-using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
+using LifeHelper.Services.Exceptions;
+using LifeHelper.Services.Utilities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static LifeHelper.Services.Utilities.LifeHelperUtilities;
+using static LifeHelper.Services.LifeHelperConstants;
 
 namespace LifeHelper.Services.Areas.Expenses;
 
@@ -16,17 +17,12 @@ public class ExpenseService : IExpenseService
     private readonly LifeHelperDbContext _dbContext;
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
-    private const decimal MinimumAmount = -999_999_999.99m;
 
-    public ExpenseService(
-        LifeHelperDbContext dbContext,
-        IMapper mapper,
-        IHttpContextAccessor contextAccessor,
-        IClaimParserService claimParserService)
+    public ExpenseService(LifeHelperDbContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _currentUserInfo = claimParserService.ParseInfoFromClaims(contextAccessor.HttpContext);
+        _currentUserInfo = ParseInfoFromClaims(contextAccessor.HttpContext);
     }
     
     public async Task<IList<ExpenseDto>> GetListAsync(int categoryId)
@@ -41,15 +37,16 @@ public class ExpenseService : IExpenseService
         return expenses;
     }
 
-    public async Task<ExpenseDto> GetByIdAsync(int categoryId, int id)
+    public async Task<ExpenseDto> GetByIdAsync(int categoryId, int expenseId)
     {
         await ThrowIfCategoryIsNotExistsAsync(categoryId);
 
         var expense = await _dbContext.Expenses
-                          .Where(expense => expense.CategoryId == categoryId)
-                          .ProjectTo<ExpenseDto>(_mapper.ConfigurationProvider)
-                          .FirstOrDefaultAsync(expense => expense.Id == id)
-                      ?? throw new NotFoundException($"Expense with Id: {id} does not exist");
+            .Where(expense => expense.CategoryId == categoryId)
+            .ProjectTo<ExpenseDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(expense => expense.Id == expenseId);
+        
+        expense.ThrowIfNotFound(expenseId);
 
         return expense;
     }
@@ -70,13 +67,14 @@ public class ExpenseService : IExpenseService
         return expenseDto;
     }
 
-    public async Task<ExpenseDto> UpdateByIdAsync(int id, ExpenseInputDto expenseInput)
+    public async Task<ExpenseDto> UpdateByIdAsync(int expenseId, ExpenseInputDto expenseInput)
     {
         await ThrowIfCategoryIsNotExistsAsync(expenseInput.CategoryId);
         
-        var expense = await _dbContext.Expenses.
-                          FirstOrDefaultAsync(expense => expense.Id == id && expense.CategoryId == expenseInput.CategoryId) 
-                      ?? throw new NotFoundException($"Expense with Id: {id} does not exist");
+        var expense = await _dbContext.Expenses
+            .FirstOrDefaultAsync(expense => expense.Id == expenseId && expense.CategoryId == expenseInput.CategoryId);
+        
+        expense.ThrowIfNotFound(expenseId);
         
         var spentMoney = expenseInput.SpentMoney - expense.SpentMoney; 
         
@@ -92,15 +90,16 @@ public class ExpenseService : IExpenseService
         return expenseDto;
     }
 
-    public async Task DeleteByIdAsync(int categoryId, int id)
+    public async Task DeleteByIdAsync(int categoryId, int expenseId)
     {
         await ThrowIfCategoryIsNotExistsAsync(categoryId);
         
         var expense = await _dbContext.Expenses
-                          .FirstOrDefaultAsync(expense => expense.Id == id && expense.CategoryId == categoryId)
-                      ?? throw new NotFoundException($"Expense with Id: {id} does not exist");
+            .FirstOrDefaultAsync(expense => expense.Id == expenseId && expense.CategoryId == categoryId);
 
-        var spentMoney = -expense.SpentMoney;
+        expense.ThrowIfNotFound(expenseId);
+
+        var spentMoney = expense.SpentMoney * -1;
 
         await UpdateTotalAndLimitMoneyAsync(categoryId, spentMoney);
         
@@ -122,29 +121,29 @@ public class ExpenseService : IExpenseService
 
     private async Task UpdateTotalAndLimitMoneyAsync(int categoryId, decimal expensedMoney)
     {
-        var userMoney = await _dbContext.UserMonies.FirstOrDefaultAsync(money => money.UserId == _currentUserInfo.Id) 
-                        ?? throw new NotFoundException("User money was not found to update money");
+        var userMoney = await _dbContext.UserMonies.FirstOrDefaultAsync(money => money.UserId == _currentUserInfo.Id);
+        userMoney.ThrowIfNotFound("User money was not found to update money");
         
         var category = await _dbContext.Categories
-                           .FirstOrDefaultAsync(category =>
-                               category.Id == categoryId && category.UserId == _currentUserInfo.Id) 
-                       ?? throw new NotFoundException("Category was not found to update money limit");
+            .FirstOrDefaultAsync(category => category.Id == categoryId && category.UserId == _currentUserInfo.Id);
+        
+        category.ThrowIfNotFound("Category was not found to update money limit");
         
         userMoney.Money -= expensedMoney;
         category.MoneyLimit -= expensedMoney;
         
-        ThrowIfMoneyOutOfRange(userMoney.Money, category.MoneyLimit);
+        ThrowIfMoneyLessThanRange(userMoney.Money, category.MoneyLimit);
 
         _dbContext.UserMonies.Update(userMoney);
         _dbContext.Categories.Update(category);
         await _dbContext.SaveChangesAsync();
     }
 
-    private void ThrowIfMoneyOutOfRange(decimal userMoney, decimal moneyLimit)
+    private void ThrowIfMoneyLessThanRange(decimal userMoney, decimal moneyLimit)
     {
         if(userMoney < MinimumAmount || moneyLimit < MinimumAmount)
         {
-            throw new BadRequestException("User money or category money limit is out of range");
+            throw new BadRequestException("User money or category money limit is less than range");
         }
     }
 }

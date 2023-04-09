@@ -1,6 +1,6 @@
 using FluentValidation;
-using LifeHelper.Services.Areas.Helpers.Validators;
 using LifeHelper.Services.Areas.SubNotes.DTOs;
+using LifeHelper.Services.Extensions;
 
 namespace LifeHelper.Services.Areas.SubNotes.Validators;
 

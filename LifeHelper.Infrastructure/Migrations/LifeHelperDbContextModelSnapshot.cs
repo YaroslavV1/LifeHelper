@@ -193,12 +193,6 @@ namespace LifeHelper.Infrastructure.Migrations
                             Id = 2,
                             NormalName = "User",
                             RoleName = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            NormalName = "Guest",
-                            RoleName = 3
                         });
                 });
 

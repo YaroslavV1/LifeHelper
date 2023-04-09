@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace LifeHelper.Infrastructure.Exceptions;
+namespace LifeHelper.Services.Exceptions;
 
 public class CustomException : Exception
 {

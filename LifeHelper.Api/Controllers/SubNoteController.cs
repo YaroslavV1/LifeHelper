@@ -37,13 +37,13 @@ public class SubNoteController : ControllerBase
     /// Get the Subnote by Note ID and Subnote ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
-    /// <param name="id">Enter the Subnote ID</param>
+    /// <param name="subNoteId">Enter the Subnote ID</param>
     /// <returns>Subnote</returns>
-    [HttpGet("{noteId:int}/{id:int}")]
+    [HttpGet("{noteId:int}/{subNoteId:int}")]
     [ProducesResponseType(typeof(SubNoteDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] int noteId, [FromRoute] int id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] int noteId, [FromRoute] int subNoteId)
     {
-        var subNote = await _subNoteService.GetByIdAsync(noteId, id);
+        var subNote = await _subNoteService.GetByIdAsync(noteId, subNoteId);
 
         return Ok(subNote);
     }
@@ -65,14 +65,14 @@ public class SubNoteController : ControllerBase
     /// <summary>
     /// Update an existing Subnote by ID
     /// </summary>
-    /// <param name="id">Enter the Subnote ID</param>
+    /// <param name="subNoteId">Enter the Subnote ID</param>
     /// <param name="subNoteInput"></param>
     /// <returns>Updated Subnote</returns>
-    [HttpPut("{id:int}")]
+    [HttpPut("{subNoteId:int}")]
     [ProducesResponseType(typeof(SubNoteDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateByIdAsync([FromRoute] int id, [FromBody] SubNoteInputDto subNoteInput)
+    public async Task<IActionResult> UpdateByIdAsync([FromRoute] int subNoteId, [FromBody] SubNoteInputDto subNoteInput)
     {
-        var subNote = await _subNoteService.UpdateByIdAsync(id, subNoteInput);
+        var subNote = await _subNoteService.UpdateByIdAsync(subNoteId, subNoteInput);
 
         return Ok(subNote);
     }
@@ -81,13 +81,13 @@ public class SubNoteController : ControllerBase
     /// Delete an existing the Subnote by Note ID and Subnote ID
     /// </summary>
     /// <param name="noteId">Enter the Note ID</param>
-    /// <param name="id">Enter the Subnote ID</param>
+    /// <param name="subNoteId">Enter the Subnote ID</param>
     /// <returns></returns>
-    [HttpDelete("{noteId:int}/{id:int}")]
+    [HttpDelete("{noteId:int}/{subNoteId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteByIdAsync([FromRoute] int noteId, [FromRoute] int id)
+    public async Task<IActionResult> DeleteByIdAsync([FromRoute] int noteId, [FromRoute] int subNoteId)
     {
-        await _subNoteService.DeleteByIdAsync(noteId, id);
+        await _subNoteService.DeleteByIdAsync(noteId, subNoteId);
 
         return Ok();
     }

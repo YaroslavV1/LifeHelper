@@ -8,8 +8,8 @@ public class SubnoteConfiguration : IEntityTypeConfiguration<SubNote>
 {
     public void Configure(EntityTypeBuilder<SubNote> builder)
     {
-        builder.HasOne(sb => sb.Note)
-            .WithMany(t => t.SubNotes)
-            .HasForeignKey(sb => sb.NoteId);
+        builder.HasOne(subNote => subNote.Note)
+            .WithMany(note => note.SubNotes)
+            .HasForeignKey(subNote => subNote.NoteId);
     }
 }

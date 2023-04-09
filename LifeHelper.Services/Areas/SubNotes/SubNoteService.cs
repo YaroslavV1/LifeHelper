@@ -2,12 +2,12 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Entities;
-using LifeHelper.Infrastructure.Exceptions;
-using LifeHelper.Services.Areas.Helpers.Jwt;
-using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
 using LifeHelper.Services.Areas.SubNotes.DTOs;
+using LifeHelper.Services.Exceptions;
+using LifeHelper.Services.Utilities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static LifeHelper.Services.Utilities.LifeHelperUtilities;
 
 namespace LifeHelper.Services.Areas.SubNotes;
 
@@ -17,15 +17,11 @@ public class SubNoteService : ISubNoteService
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
 
-    public SubNoteService(
-        LifeHelperDbContext dbContext, 
-        IMapper mapper, 
-        IHttpContextAccessor context, 
-        IClaimParserService claimParserService)
+    public SubNoteService(LifeHelperDbContext dbContext, IMapper mapper, IHttpContextAccessor context)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _currentUserInfo = claimParserService.ParseInfoFromClaims(context.HttpContext);
+        _currentUserInfo = ParseInfoFromClaims(context.HttpContext);
     }
     
     public async Task<IList<SubNoteDto>> GetListAsync(int noteId)
@@ -38,15 +34,18 @@ public class SubNoteService : ISubNoteService
             .ToListAsync();
     }
 
-    public async Task<SubNoteDto> GetByIdAsync(int noteId, int id)
+    public async Task<SubNoteDto> GetByIdAsync(int noteId, int subNoteId)
     {
         await ThrowIfNoteIsNotExists(noteId);
         
-        return await _dbContext.SubNotes
-                   .Where(subNote => subNote.NoteId == noteId)
-                   .ProjectTo<SubNoteDto>(_mapper.ConfigurationProvider)
-                   .FirstOrDefaultAsync(subNote => subNote.Id == id)
-               ?? throw new NotFoundException($"Subnote with Id: {id} was not found");
+        var subNote = await _dbContext.SubNotes
+            .Where(subNote => subNote.NoteId == noteId)
+            .ProjectTo<SubNoteDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(subNote => subNote.Id == subNoteId);
+        
+        subNote.ThrowIfNotFound(subNoteId);
+
+        return subNote;
     }
 
     public async Task<SubNoteDto> CreateAsync(SubNoteInputDto subNoteInputDto)
@@ -63,13 +62,14 @@ public class SubNoteService : ISubNoteService
         return subNoteDto;
     }
 
-    public async Task<SubNoteDto> UpdateByIdAsync(int id, SubNoteInputDto subNoteInputDto)
+    public async Task<SubNoteDto> UpdateByIdAsync(int subNoteId, SubNoteInputDto subNoteInputDto)
     {
         await ThrowIfNoteIsNotExists(subNoteInputDto.NoteId);
         
         var subNote = await _dbContext.SubNotes
-                          .FirstOrDefaultAsync(subNote => subNote.Id == id && subNote.NoteId == subNoteInputDto.NoteId) 
-                      ?? throw new NotFoundException($"Subnote with Id: {id} was not found");
+            .FirstOrDefaultAsync(subNote => subNote.Id == subNoteId && subNote.NoteId == subNoteInputDto.NoteId);
+        
+        subNote.ThrowIfNotFound(subNoteId);
 
         _mapper.Map(subNoteInputDto, subNote);
 
@@ -81,13 +81,14 @@ public class SubNoteService : ISubNoteService
         return subNoteDto;
     }
 
-    public async Task DeleteByIdAsync(int noteId, int id)
+    public async Task DeleteByIdAsync(int noteId, int subNoteId)
     {
         await ThrowIfNoteIsNotExists(noteId);
         
         var subNote = await _dbContext.SubNotes
-                          .FirstOrDefaultAsync(subNote => subNote.Id == id && subNote.NoteId == noteId) 
-                      ?? throw new NotFoundException($"Subnote with Id: {id} not found");
+            .FirstOrDefaultAsync(subNote => subNote.Id == subNoteId && subNote.NoteId == noteId);
+        
+        subNote.ThrowIfNotFound(subNoteId);
 
         _dbContext.SubNotes.Remove(subNote);
         await _dbContext.SaveChangesAsync();

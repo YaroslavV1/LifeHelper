@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LifeHelper.Api.Controllers;
 
 [ApiController]
-[Route("api/category")]
+[Route("api/categories")]
 [Produces(MediaTypeNames.Application.Json)]
 [Authorize]
 public class CategoryController : ControllerBase

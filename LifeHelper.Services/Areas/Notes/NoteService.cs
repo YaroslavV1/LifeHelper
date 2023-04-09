@@ -1,12 +1,11 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
-using LifeHelper.Infrastructure.Exceptions;
-using LifeHelper.Services.Areas.Helpers.Jwt;
-using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
 using LifeHelper.Services.Areas.Notes.DTOs;
+using LifeHelper.Services.Utilities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static LifeHelper.Services.Utilities.LifeHelperUtilities;
 
 namespace LifeHelper.Services.Areas.Notes;
 
@@ -18,57 +17,58 @@ public class NoteService : INoteService
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
     
-    public NoteService(
-        LifeHelperDbContext dbContext,
-        IMapper mapper,
-        IHttpContextAccessor context,
-        IClaimParserService parserService)
+    public NoteService(LifeHelperDbContext dbContext, IMapper mapper, IHttpContextAccessor context)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _currentUserInfo = parserService.ParseInfoFromClaims(context.HttpContext);
+        _currentUserInfo = ParseInfoFromClaims(context.HttpContext);
     }
 
-    public async Task<IList<NoteDto>> GetListAsync(bool isDescending)
+    public async Task<IList<NoteDto>> GetListAsync(bool? inputFilter)
     {
         var notes = _dbContext.Notes.Where(note => note.UserId == _currentUserInfo.Id);
         
-        notes = isDescending 
-            ? notes.OrderByDescending(note => note.CreatedDate) 
-            : notes.OrderBy(note => note.CreatedDate);
+        if (inputFilter is { } isDescending)
+        {
+            notes = isDescending
+                ? notes.OrderByDescending(note => note.CreatedDate) 
+                : notes.OrderBy(note => note.CreatedDate);
+        }
 
         return await notes.ProjectTo<NoteDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<NoteDto> GetByIdAsync(int id)
     {
-        return await _dbContext.Notes
-                   .Where(note => note.UserId == _currentUserInfo.Id)
-                   .ProjectTo<NoteDto>(_mapper.ConfigurationProvider)
-                   .FirstOrDefaultAsync(note => note.Id == id) 
-               ?? throw new NotFoundException($"Note with Id: {id} not found");
+        var note = await _dbContext.Notes
+            .Where(note => note.UserId == _currentUserInfo.Id)
+            .ProjectTo<NoteDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(note => note.Id == id);
+        
+        note.ThrowIfNotFound(id);
+
+        return note;
     }
 
     public async Task<NoteDto> CreateAsync(NoteInputDto noteInput)
     {
         var note = _mapper.Map<Note>(noteInput);
-
-        note.CreatedDate = DateTime.UtcNow;
-
         note.UserId = _currentUserInfo.Id;
 
         await _dbContext.Notes.AddAsync(note);
         await _dbContext.SaveChangesAsync();
 
         var noteDto = _mapper.Map<NoteDto>(note);
+        
         return noteDto;
     }
 
     public async Task<NoteDto> UpdateByIdAsync(int id, NoteInputDto noteInput)
     {
         var note = await _dbContext.Notes
-                       .FirstOrDefaultAsync(note => note.Id == id && note.UserId == _currentUserInfo.Id) 
-                   ?? throw new NotFoundException($"Note with Id: {id} not found");
+            .FirstOrDefaultAsync(note => note.Id == id && note.UserId == _currentUserInfo.Id);
+        
+        note.ThrowIfNotFound(id);
 
         _mapper.Map(noteInput, note);
         
@@ -83,8 +83,9 @@ public class NoteService : INoteService
     public async Task DeleteByIdAsync(int id)
     {
         var note = await _dbContext.Notes
-                       .FirstOrDefaultAsync(note => note.Id == id && note.UserId == _currentUserInfo.Id) 
-                   ?? throw new NotFoundException($"Note with Id: {id} not found");
+            .FirstOrDefaultAsync(note => note.Id == id && note.UserId == _currentUserInfo.Id);
+        
+        note.ThrowIfNotFound(id);
 
         _dbContext.Notes.Remove(note);
         await _dbContext.SaveChangesAsync();

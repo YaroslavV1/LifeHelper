@@ -2,12 +2,12 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Entities;
-using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.Archive.DTOs;
-using LifeHelper.Services.Areas.Helpers.Jwt;
-using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
+using LifeHelper.Services.Utilities;
+using LifeHelper.Services.Utilities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static LifeHelper.Services.Utilities.LifeHelperUtilities;
 
 namespace LifeHelper.Services.Areas.Archive;
 
@@ -17,23 +17,20 @@ public class ArchiveService : IArchiveService
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
 
-    public ArchiveService(
-        LifeHelperDbContext dbContext,
-        IMapper mapper,
-        IHttpContextAccessor contextAccessor,
-        IClaimParserService claimParserService)
+    public ArchiveService(LifeHelperDbContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _currentUserInfo = claimParserService.ParseInfoFromClaims(contextAccessor.HttpContext);
+        _currentUserInfo = ParseInfoFromClaims(contextAccessor.HttpContext);
     }
     
     public async Task ArchiveByIdAsync(int noteId)
     {
         var note = await _dbContext.Notes
-                       .Include(note => note.SubNotes)
-                       .FirstOrDefaultAsync(note => note.Id == noteId && note.UserId == _currentUserInfo.Id) 
-                   ?? throw new NotFoundException($"Note with Id: {noteId} not found");
+            .Include(note => note.SubNotes)
+            .FirstOrDefaultAsync(note => note.Id == noteId && _currentUserInfo.Id == note.UserId);
+        
+        note.ThrowIfNotFound(noteId);
 
         var archiveNote = _mapper.Map<ArchiveNote>(note);
 
@@ -45,10 +42,11 @@ public class ArchiveService : IArchiveService
     public async Task UnArchiveByIdAsync(int archiveNoteId)
     {
         var archiveNote = await _dbContext.ArchiveNotes
-                              .Include(archiveNote => archiveNote.ArchiveSubNotes)
-                              .FirstOrDefaultAsync(archiveNote => 
-                                  archiveNote.Id == archiveNoteId && archiveNote.UserId == _currentUserInfo.Id) 
-                          ?? throw new NotFoundException($"Archive Note with Id: {archiveNoteId} not found");
+            .Include(archiveNote => archiveNote.ArchiveSubNotes)
+            .FirstOrDefaultAsync(archiveNote =>
+                archiveNote.Id == archiveNoteId && _currentUserInfo.Id == archiveNote.UserId);
+        
+        archiveNote.ThrowIfNotFound(archiveNoteId);
 
         var note = _mapper.Map<Note>(archiveNote);
 
@@ -59,32 +57,37 @@ public class ArchiveService : IArchiveService
 
     public async Task<IList<ArchiveNoteDto>> GetListAsync(bool isDescending)
     {
-        var archiveNote = _dbContext.ArchiveNotes
+        var archiveNotes = _dbContext.ArchiveNotes
             .Include(archiveNote => archiveNote.ArchiveSubNotes)
-            .Where(archiveNote => archiveNote.UserId == _currentUserInfo.Id);
+            .Where(archiveNote => _currentUserInfo.Id == archiveNote.UserId);
         
-        archiveNote = isDescending 
-            ? archiveNote.OrderByDescending(arcNote => arcNote.CreatedDate) 
-            : archiveNote.OrderBy(arcNote => arcNote.CreatedDate);
+        archiveNotes = isDescending 
+            ? archiveNotes.OrderByDescending(arcNote => arcNote.CreatedDate) 
+            : archiveNotes.OrderBy(arcNote => arcNote.CreatedDate);
 
-        return await archiveNote.ProjectTo<ArchiveNoteDto>(_mapper.ConfigurationProvider).ToListAsync();
+        return await archiveNotes.ProjectTo<ArchiveNoteDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<ArchiveNoteDto> GetByIdAsync(int archiveNoteId)
     {
-        return await _dbContext.ArchiveNotes
+        var archiveNoteDto = await _dbContext.ArchiveNotes
             .Include(archiveNote => archiveNote.ArchiveSubNotes)
-            .Where(archiveNote => archiveNote.UserId == _currentUserInfo.Id)
+            .Where(archiveNote => _currentUserInfo.Id == archiveNote.UserId)
             .ProjectTo<ArchiveNoteDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(archiveNote => archiveNote.Id == archiveNoteId)
-            ?? throw new NotFoundException($"Archive Note with Id: {archiveNoteId} not found");
+            .FirstOrDefaultAsync(archiveNote => archiveNote.Id == archiveNoteId);
+
+        archiveNoteDto.ThrowIfNotFound(archiveNoteId);
+        
+        return archiveNoteDto;
     }
 
     public async Task DeleteByIdAsync(int archiveNoteId)
     {
-        var archiveNote = await _dbContext.ArchiveNotes.FirstOrDefaultAsync(archiveNote => 
-                              archiveNote.Id == archiveNoteId && archiveNote.UserId == _currentUserInfo.Id) 
-                          ?? throw new NotFoundException($"Archive Note with Id: {archiveNoteId} not found");
+        var archiveNote = await _dbContext.ArchiveNotes
+            .FirstOrDefaultAsync(archiveNote =>
+                archiveNote.Id == archiveNoteId && _currentUserInfo.Id == archiveNote.UserId);
+
+        archiveNote.ThrowIfNotFound(archiveNoteId);
 
         _dbContext.ArchiveNotes.Remove(archiveNote);
         await _dbContext.SaveChangesAsync();

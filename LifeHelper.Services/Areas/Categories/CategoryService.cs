@@ -2,12 +2,12 @@
 using AutoMapper.QueryableExtensions;
 using LifeHelper.Infrastructure;
 using LifeHelper.Infrastructure.Entities;
-using LifeHelper.Infrastructure.Exceptions;
 using LifeHelper.Services.Areas.Categories.DTOs;
-using LifeHelper.Services.Areas.Helpers.Jwt;
-using LifeHelper.Services.Areas.Helpers.Jwt.DTOs;
+using LifeHelper.Services.Exceptions;
+using LifeHelper.Services.Utilities.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static LifeHelper.Services.Utilities.LifeHelperUtilities;
 
 namespace LifeHelper.Services.Areas.Categories;
 
@@ -17,15 +17,11 @@ public class CategoryService : ICategoryService
     private readonly IMapper _mapper;
     private readonly TokenInfoDto _currentUserInfo;
     
-    public CategoryService(
-        LifeHelperDbContext dbContext,
-        IMapper mapper,
-        IHttpContextAccessor contextAccessor,
-        IClaimParserService claimParserService)
+    public CategoryService(LifeHelperDbContext dbContext, IMapper mapper, IHttpContextAccessor contextAccessor)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _currentUserInfo = claimParserService.ParseInfoFromClaims(contextAccessor.HttpContext);
+        _currentUserInfo = ParseInfoFromClaims(contextAccessor.HttpContext);
     }
     
     public async Task<IList<CategoryDto>> GetListAsync()
@@ -41,10 +37,11 @@ public class CategoryService : ICategoryService
     public async Task<CategoryDto> GetByIdAsync(int id)
     {
         var category = await _dbContext.Categories
-                           .Where(category => category.UserId == _currentUserInfo.Id)
-                           .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
-                           .FirstOrDefaultAsync(category => category.Id == id)
-                       ?? throw new NotFoundException($"Category with Id: {id} not found");
+            .Where(category => category.UserId == _currentUserInfo.Id)
+            .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(category => category.Id == id);
+        
+        category.ThrowIfNotFound(id);
 
         return category;
     }
@@ -68,8 +65,9 @@ public class CategoryService : ICategoryService
     public async Task<CategoryDto> UpdateByIdAsync(int id, CategoryInputDto categoryInput)
     {
         var category = await _dbContext.Categories
-                           .FirstOrDefaultAsync(category => category.Id == id && category.UserId == _currentUserInfo.Id) 
-                       ?? throw new NotFoundException($"Category with Id: {id} not found");
+            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == _currentUserInfo.Id);
+        
+        category.ThrowIfNotFound(id);
 
         await ThrowIfTitleExistsAsync(categoryInput.Title, category.Id);
         
@@ -86,8 +84,9 @@ public class CategoryService : ICategoryService
     public async Task DeleteByIdAsync(int id)
     {
         var category = await _dbContext.Categories
-                           .FirstOrDefaultAsync(category => category.Id == id && category.UserId == _currentUserInfo.Id)
-                       ?? throw new NotFoundException($"Category with Id: {id} not found");
+            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == _currentUserInfo.Id);
+        
+        category.ThrowIfNotFound(id);
         
         _dbContext.Categories.Remove(category);
         await _dbContext.SaveChangesAsync();

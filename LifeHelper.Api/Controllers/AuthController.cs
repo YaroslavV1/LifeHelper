@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LifeHelper.Api.Controllers;
 
-
 [ApiController]
 [Route("api/auth")]
 [Produces(MediaTypeNames.Application.Json)]
@@ -25,11 +24,11 @@ public class AuthController: ControllerBase
     /// </summary>
     /// <param name="userInputDto"></param>
     /// <returns></returns>
-    [HttpPost("registration")]
+    [HttpPost("register")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> RegistrationAsync([FromBody] UserInputDto userInputDto)
+    public async Task<IActionResult> RegisterAsync([FromBody] UserInputDto userInputDto)
     {
-        await _authService.RegistrationAsync(userInputDto);
+        await _authService.RegisterAsync(userInputDto);
         
         return Ok();
     }
@@ -43,8 +42,8 @@ public class AuthController: ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto loginDto)
     {
-        var jwtToken = await _authService.LoginAsync(loginDto);
+        var token = await _authService.LoginAsync(loginDto);
 
-        return Ok(jwtToken);
+        return Ok(token);
     }
 }

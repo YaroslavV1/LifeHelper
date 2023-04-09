@@ -8,8 +8,8 @@ public class TaskItemConfiguration : IEntityTypeConfiguration<Note>
 {
     public void Configure(EntityTypeBuilder<Note> builder)
     {
-        builder.HasOne(t => t.User)
-            .WithMany(u => u.Notes)
-            .HasForeignKey(t => t.UserId);
+        builder.HasOne(note => note.User)
+            .WithMany(user => user.Notes)
+            .HasForeignKey(note => note.UserId);
     }
 }

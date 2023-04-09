@@ -19,7 +19,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
     
-    public async Task RegistrationAsync(UserInputDto userInputDto)
+    public async Task RegisterAsync(UserInputDto userInputDto)
     {
         await _userService.CreateAsync(userInputDto);
     }
@@ -30,10 +30,10 @@ public class AuthService : IAuthService
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, loggedInUser.Id + string.Empty),
-            new Claim(ClaimTypes.Name, loggedInUser.Nickname),
-            new Claim(ClaimTypes.Email, loggedInUser.Email),
-            new Claim(ClaimTypes.Role, loggedInUser.Roles.ElementAt(0).RoleName)
+            new(ClaimTypes.NameIdentifier, loggedInUser.Id.ToString()),
+            new(ClaimTypes.Name, loggedInUser.Nickname),
+            new(ClaimTypes.Email, loggedInUser.Email),
+            new(ClaimTypes.Role, loggedInUser.Roles.ElementAt(0).RoleName)
         };
 
         var key = new SymmetricSecurityKey(
